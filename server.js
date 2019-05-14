@@ -7,9 +7,10 @@ const mapnik = require('mapnik');
 const SphericalMercator = require('@mapbox/sphericalmercator');
 const Handlebars = require('handlebars');
 
-// Constants
-const PORT = 8888;
-const HOST = '0.0.0.0';
+// Load config for non-production environments
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 // Register fonts and datasource plugins
 mapnik.register_default_fonts();
@@ -53,5 +54,5 @@ app.get('/:uuid/:z/:x/:y.png', function(req, res, next) {
 });
 
 // Start Server
-app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
+app.listen(process.env.PORT, process.env.HOST);
+console.log(`Running on http://${process.env.HOST}:${process.env.PORT}`);

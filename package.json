@@ -11,6 +11,7 @@
   "main": "server.js",
   "dependencies": {
     "@mapbox/sphericalmercator": "~1.1.0",
+    "dotenv": "^8.0.0",
     "express": "~4.16.4",
     "handlebars": "^4.1.2",
     "morgan": "^1.9.1"
