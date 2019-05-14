@@ -5,6 +5,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mapnik = require('mapnik');
 const SphericalMercator = require('@mapbox/sphericalmercator');
+const Handlebars = require('handlebars');
 
 // Constants
 const PORT = 8888;
@@ -16,6 +17,9 @@ mapnik.register_default_input_plugins();
 
 const mercator = new SphericalMercator();
 
+// Prepare imagery config template
+const imagery = Handlebars.compile(fs.readFileSync('imagery.xml', 'utf8'));
+
 // Create Express App
 const app = express();
 
@@ -23,9 +27,6 @@ const app = express();
 app.use(morgan('dev'));
 
 app.get('/:uuid/:z/:x/:y.png', function(req, res, next) {
-  // Get config and replace GeoTiff UUID
-  const xml = fs.readFileSync('imagery.xml', 'utf8').replace('{{uuid}}', req.params.uuid);
-
   // Create Mapnik object
   const map = new mapnik.Map(256, 256);
 
@@ -33,7 +34,7 @@ app.get('/:uuid/:z/:x/:y.png', function(req, res, next) {
   map.zoomToBox(mercator.bbox(req.params.x, req.params.y, req.params.z, false, '900913'));
 
   // Read map config from modified XML
-  map.fromString(xml, function(err, map) {
+  map.fromString(imagery({ uuid: req.params.uuid}), function(err, map) {
     if (err) return next(err);
 
     // Create image object from map config
