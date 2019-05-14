@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 const mapnik = require('mapnik');
 const SphericalMercator = require('@mapbox/sphericalmercator');
 
@@ -17,6 +18,9 @@ const mercator = new SphericalMercator();
 
 // Create Express App
 const app = express();
+
+// Add logger
+app.use(morgan('dev'));
 
 app.get('/:uuid/:z/:x/:y.png', function(req, res, next) {
   // Get config and replace GeoTiff UUID
