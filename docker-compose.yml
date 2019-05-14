@@ -1,0 +1,10 @@
+version: '3'
+services:
+  tiler:
+    build: .
+    volumes:
+      - .:/srv/app
+    ports:
+      - "8888:8888"
+    working_dir: /srv/app
+    command: "npm start"

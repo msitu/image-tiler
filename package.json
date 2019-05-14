@@ -1,0 +1,17 @@
+{
+  "name": "image-tiler",
+  "version": "1.0.0",
+  "description": "Ceres Imaging Tile Server",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Ceres Avian Team",
+  "license": "ISC",
+  "repository": "https://github.com/ceresimaging/image-tiler",
+  "main": "server.js",
+  "dependencies": {
+    "express": "~4.16.4",
+    "@mapbox/sphericalmercator": "~1.1.0"
+  },
+  "devDependencies": {}
+}
