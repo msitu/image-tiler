@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Map[]>
+<Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs">
+  <Style filter-mode="first" name="gssurgo-label">
+    <Rule>
+      <MaxScaleDenominator>5000</MaxScaleDenominator>
+      <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="10" wrap-width="150">[muname]+'\n Drainage Class: '+[drclassdcd]+'\n Water Storage (0-100): '+[aws0100wta]</TextSymbolizer>
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>12500</MaxScaleDenominator>
+      <MinScaleDenominator>5000</MinScaleDenominator>
+      <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="10" wrap-width="150">[muname]</TextSymbolizer>
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>100000</MaxScaleDenominator>
+      <MinScaleDenominator>12500</MinScaleDenominator>
+      <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="10" wrap-width="150">[musym]</TextSymbolizer>
+    </Rule>
+  </Style>
+  <Style filter-mode="first" name="gssurgo">
+    <Rule>
+      <LineSymbolizer stroke="#e6ef49" stroke-width="1" />
+    </Rule>
+  </Style>
+  <Layer name="gssurgo" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
+    <StyleName>gssurgo</StyleName>
+    <StyleName>gssurgo-label</StyleName>
+    <Datasource>
+      <Parameter name="type">postgis</Parameter>
+      <Parameter name="host">{{ host }}</Parameter>
+      <Parameter name="port">{{ port }}</Parameter>
+      <Parameter name="user">{{ user }}</Parameter>
+      <Parameter name="password">{{ password }}</Parameter>
+      <Parameter name="dbname">{{ dbname }}</Parameter>
+      <Parameter name="table">{{ table }}</Parameter>
+      <Parameter name="key_field">id</Parameter>
+      <Parameter name="geometry_field">geom</Parameter>
+      <Parameter name="max_size">10</Parameter>
+      <Parameter name="extent">-192.39,17.47,-58.53,72.12</Parameter>
+      <Parameter name="connect_timeout">30</Parameter>
+    </Datasource>
+  </Layer>
+</Map>
