@@ -73,6 +73,10 @@ app.get('/soil/:z/:x/:y.png', function(req, res, next) {
   generateTile(req, res, next, gssurgo);
 });
 
+app.get('/status', function(req, res, next) {
+  res.sendStatus(200);
+});
+
 // Start Server
 app.listen(process.env.PORT, process.env.HOST);
 console.log(`Running on http://${process.env.HOST}:${process.env.PORT}`);
