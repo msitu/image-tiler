@@ -47,16 +47,18 @@ const generateTile = function(req, res, next, config) {
     if (err) return next(err);
 
     // Create image object from map config
-    var im = new mapnik.Image(map.width, map.height);
+    const image = new mapnik.Image(map.width, map.height);
 
     // Render and return PNG
-    map.render(im, function(err,im) {
+    map.render(image, function(err, tile) {
       if (err) return next(err);
 
-      res.writeHead(200, {
-        'Content-Type': 'image/png'
+      tile.encode('png', function(err, png) {
+        if (err) return next(err);
+
+        res.writeHead(200, { 'Content-Type': 'image/png' });
+        res.end(png);
       });
-      res.end(im.encodeSync('png'));
     });
   });
 }
