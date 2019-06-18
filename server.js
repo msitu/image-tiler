@@ -33,7 +33,7 @@ const gssurgo = Handlebars.compile(fs.readFileSync('gssurgo.xml', 'utf8'))({
 const app = express();
 
 // Add logger
-app.use(morgan('dev'));
+app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'));
 
 const generateTile = function(req, res, next, config) {
   // Create Mapnik object
