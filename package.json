@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Ceres Imaging Tile Server",
   "scripts": {
-    "start": "pm2-runtime server.js --watch --node-args='--expose-gc'"
+    "start": "pm2-runtime server.js --watch"
   },
   "author": "Ceres Avian Team",
   "license": "ISC",

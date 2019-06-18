@@ -58,9 +58,6 @@ const generateTile = function(req, res, next, config) {
 
         res.writeHead(200, { 'Content-Type': 'image/png' });
         res.end(png);
-
-        // Call Garbage Collector to avoid memory issues
-        global.gc()
       });
     });
   });
