@@ -7,10 +7,8 @@ const mapnik = require('mapnik');
 const SphericalMercator = require('@mapbox/sphericalmercator');
 const Handlebars = require('handlebars');
 
-// Load config for non-production environments
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
+// Load config from .env file
+require('dotenv').config();
 
 // Register fonts and datasource plugins
 mapnik.register_default_fonts();
