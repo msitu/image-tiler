@@ -29,3 +29,6 @@ COPY package.json /
 WORKDIR /
 RUN npm install
 RUN npm link mapnik
+
+# Install Node Process Manager
+RUN npm install pm2@latest -g
