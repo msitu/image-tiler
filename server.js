@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const express = require('express');
+const cors = require('cors');
 const morgan = require('morgan');
 const mapnik = require('mapnik');
 const SphericalMercator = require('@mapbox/sphericalmercator');
@@ -31,6 +32,9 @@ const gssurgo = Handlebars.compile(fs.readFileSync('gssurgo.xml', 'utf8'))({
 
 // Create Express App
 const app = express();
+
+// Add CORS
+app.use(cors({ origin: true }));
 
 // Add logger
 app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'));
