@@ -39,33 +39,39 @@ app.use(cors({ origin: true }));
 // Add logger
 app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'));
 
+// Generate PNG and respond the request with it
+const generateImage = function(map, res, next) {
+  // Create image object from map config
+  const image = new mapnik.Image(map.width, map.height);
+
+  // Render and return PNG
+  map.render(image, function(err, tile) {
+    if (err) return next(err);
+
+    tile.encode('png', function(err, png) {
+      if (err) return next(err);
+
+      res.writeHead(200, { 'Content-Type': 'image/png' });
+      res.end(png);
+    });
+  });
+};
+
+// Generate tile base on config
 const generateTile = function(req, res, next, config) {
   // Create Mapnik object
   const map = new mapnik.Map(256, 256);
-
-  // Convert XYZ to BoundingBox and set the Map extent
-  map.zoomToBox(mercator.bbox(req.params.x, req.params.y, req.params.z, false, '900913'));
 
   // Read map config
   map.fromString(config, function(err, map) {
     if (err) return next(err);
 
-    // Create image object from map config
-    const image = new mapnik.Image(map.width, map.height);
+    // Convert XYZ to BoundingBox and set the Map extent
+    map.zoomToBox(mercator.bbox(req.params.x, req.params.y, req.params.z, false, '900913'));
 
-    // Render and return PNG
-    map.render(image, function(err, tile) {
-      if (err) return next(err);
-
-      tile.encode('png', function(err, png) {
-        if (err) return next(err);
-
-        res.writeHead(200, { 'Content-Type': 'image/png' });
-        res.end(png);
-      });
-    });
+    generateImage(map, res, next);
   });
-}
+};
 
 // Ceres imagery tiles
 app.get('/imagery/:uuid/:z/:x/:y.png', function(req, res, next) {
@@ -77,6 +83,27 @@ app.get('/soil/:z/:x/:y.png', function(req, res, next) {
   generateTile(req, res, next, gssurgo);
 });
 
+// Ceres imagery untiled image
+app.get('/imagery/:uuid.png', function(req, res, next) {
+  // Get size from query params
+  const width = req.query.width || 1024;
+  const height = req.query.height || 1024;
+
+  // Create Mapnik object
+  const map = new mapnik.Map(width, height);
+
+  // Read map config
+  map.fromString(imagery({ uuid: req.params.uuid}), function(err, map) {
+    if (err) return next(err);
+
+    // Zoom to image extent
+    map.zoomAll();
+
+    generateImage(map, res, next);
+  });
+});
+
+// Server status check
 app.get('/status', function(req, res, next) {
   res.sendStatus(200);
 });
