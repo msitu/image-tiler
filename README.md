@@ -2,7 +2,7 @@
 
 ## How to make it work locally
 
-1. Generate your config file: `cp .env.example .env`
+1. Generate your config file: `cp server/.env.example server/.env`
 
 2. Setup and run container: `docker-compose up`
 
