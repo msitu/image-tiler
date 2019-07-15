@@ -103,36 +103,6 @@ app.get('/imagery/:uuid.png', function(req, res, next) {
   });
 });
 
-// VRA Generator
-app.get('/vra/:uuid', function(req, res, next) {
-  // const raster = gdal.open(`/vsicurl/https://s3-us-west-2.amazonaws.com/ceres-geotiff-data/${req.params.uuid}.tif`);
-  const raster = gdal.open(`./${req.params.uuid}.tif`);
-
-  const temp = gdal.open('temp', 'w', 'Memory');
-
-  const layer = temp.layers.create('temp', null, gdal.Polygon);
-  layer.fields.add(new gdal.FieldDefn('val', gdal.OFTInteger));
-
-  gdal.polygonize({
-    src: raster.bands.get(1),
-    dst: layer,
-    pixValField: 0,
-    connectedness: 8
-  });
-
-  const features = layer.features.map(function(f) {
-    return {
-      properties: f.fields.toObject(),
-      geometry: f.getGeometry().toObject()
-    };
-  });
-
-  res.json({
-    type: 'FeatureCollection',
-    features: features
-  });
-});
-
 // Server status check
 app.get('/status', function(req, res, next) {
   res.sendStatus(200);
