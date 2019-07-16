@@ -36,4 +36,4 @@ RUN npm install
 RUN npm link mapnik
 
 # Run server
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "start" ]
