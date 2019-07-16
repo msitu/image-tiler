@@ -3,8 +3,13 @@
 <Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs">
   <Style filter-mode="first" name="gssurgo-label">
     <Rule>
-      <MaxScaleDenominator>5000</MaxScaleDenominator>
+      <MaxScaleDenominator>3000</MaxScaleDenominator>
       <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="12" wrap-width="150">[muname]+'\n Drainage Class: '+[drclassdcd]+'\n Water Storage (0-100): '+[aws0100wta]</TextSymbolizer>
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>5000</MaxScaleDenominator>
+      <MinScaleDenominator>3000</MinScaleDenominator>
+      <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="11" wrap-width="150">[muname]+'\n Drainage Class: '+[drclassdcd]+'\n Water Storage (0-100): '+[aws0100wta]</TextSymbolizer>
     </Rule>
     <Rule>
       <MaxScaleDenominator>12500</MaxScaleDenominator>
@@ -17,13 +22,24 @@
       <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="10" wrap-width="150">[musym]</TextSymbolizer>
     </Rule>
   </Style>
-  <Style filter-mode="first" name="gssurgo">
+  <Style filter-mode="first" name="gssurgo-line">
     <Rule>
-      <LineSymbolizer stroke="#e6ef49" stroke-width="1" />
+      <MaxScaleDenominator>5000</MaxScaleDenominator>
+      <LineSymbolizer stroke="#e6ef49" stroke-width="3" smooth="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>12500</MaxScaleDenominator>
+      <MinScaleDenominator>5000</MinScaleDenominator>
+      <LineSymbolizer stroke="#e6ef49" stroke-width="2" smooth="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>100000</MaxScaleDenominator>
+      <MinScaleDenominator>12500</MinScaleDenominator>
+      <LineSymbolizer stroke="#e6ef49" stroke-width="1" smooth="1" />
     </Rule>
   </Style>
   <Layer name="gssurgo" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
-    <StyleName>gssurgo</StyleName>
+    <StyleName>gssurgo-line</StyleName>
     <StyleName>gssurgo-label</StyleName>
     <Datasource>
       <Parameter name="type">postgis</Parameter>
