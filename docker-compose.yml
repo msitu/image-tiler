@@ -5,6 +5,6 @@ services:
     volumes:
       - .:/srv/tiler
     ports:
-      - "8888:8888"
+      - 8888:8888
     working_dir: /srv/tiler
-    command: "npm start"
+    command: npm start

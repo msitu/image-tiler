@@ -4,7 +4,7 @@
   <Style filter-mode="first" name="gssurgo-label">
     <Rule>
       <MaxScaleDenominator>5000</MaxScaleDenominator>
-      <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="10" wrap-width="150">[muname]+'\n Drainage Class: '+[drclassdcd]+'\n Water Storage (0-100): '+[aws0100wta]</TextSymbolizer>
+      <TextSymbolizer clip="false" face-name="DejaVu Sans Book" fill="#ffffff" halo-fill="rgba(0, 0, 0, 0.5)" halo-radius="2" line-spacing="5" size="12" wrap-width="150">[muname]+'\n Drainage Class: '+[drclassdcd]+'\n Water Storage (0-100): '+[aws0100wta]</TextSymbolizer>
     </Rule>
     <Rule>
       <MaxScaleDenominator>12500</MaxScaleDenominator>

@@ -1,5 +1,8 @@
 FROM node:10-slim
 
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+
 RUN apt update -y
 
 # Install system dependencies
@@ -26,11 +29,11 @@ RUN make release_base
 RUN scripts/postinstall.sh
 RUN npm link
 
-# Install Node Process Manager
-RUN npm install pm2@latest -g
-
 # Install Node packages
 WORKDIR /srv/tiler
-COPY package.json ecosystem.config.js server ./
+COPY . .
 RUN npm install
 RUN npm link mapnik
+
+# Run server
+CMD [ "npm", "run", "start:prod" ]
