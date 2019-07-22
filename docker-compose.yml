@@ -3,8 +3,8 @@ services:
   tiler:
     build: .
     volumes:
-      - .:/srv/app
+      - .:/srv/tiler
     ports:
-      - "8888:8888"
-    working_dir: /srv/app
-    command: "npm start"
+      - 8888:80
+    working_dir: /srv/tiler
+    command: npm run dev
