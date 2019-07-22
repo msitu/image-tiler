@@ -17,6 +17,8 @@ mapnik.register_default_input_plugins();
 
 const mercator = new SphericalMercator();
 
+const uuidPattern = /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i;
+
 // Setup imagery config template
 const imagery = Handlebars.compile(fs.readFileSync('imagery.xml', 'utf8'));
 
@@ -62,6 +64,12 @@ const generateImage = function(map, res, next) {
 
 // Generate tile base on config
 const generateTile = function(req, res, next, config) {
+  // Check XYZ parameters
+  if (isNaN(req.params.x) || isNaN(req.params.y) || isNaN(req.params.z)) {
+    res.status(422).send('Bad format: XYZ')
+    return
+  }
+
   // Create Mapnik object
   const map = new mapnik.Map(256, 256);
 
@@ -78,6 +86,12 @@ const generateTile = function(req, res, next, config) {
 
 // Ceres imagery tiles
 app.get('/imagery/:uuid/:z/:x/:y.png', function(req, res, next) {
+  // Check UUID parameter
+  if (!uuidPattern.test(req.params.uuid)) {
+    res.status(422).send('Bad format: UUID')
+    return
+  }
+
   generateTile(req, res, next, imagery({ uuid: req.params.uuid}));
 });
 
