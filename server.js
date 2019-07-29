@@ -53,6 +53,9 @@ const generateImage = function(map, res, next) {
     tile.encode('png', function(err, png) {
       if (err) return next(err);
 
+      // Set cache age to 90 days
+      res.set('Cache-Control', 'max-age=7776000');
+
       res.writeHead(200, { 'Content-Type': 'image/png' });
       res.end(png);
 
