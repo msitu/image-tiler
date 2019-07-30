@@ -9,8 +9,8 @@
   <Layer name="imagery" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
     <StyleName>imagery</StyleName>
     <Datasource>
-      <Parameter name="file">/vsicurl/https://s3-us-west-2.amazonaws.com/ceres-geotiff-data/{{ uuid }}.tif</Parameter>
-      <Parameter name="type">gdal</Parameter>
+      <Parameter name="file">{{ path }}</Parameter>
+      <Parameter name="type">raster</Parameter>
     </Datasource>
   </Layer>
 </Map>

@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -87,6 +88,38 @@ const generateTile = function(req, res, next, config) {
   });
 };
 
+// Download GeoTiff from S3 to the local cache
+const downloadTiff = function(uuid) {
+  const path = `${process.env.CACHE_PATH}/${uuid}.tiff`
+
+  return new Promise((resolve) => {
+    if (fs.existsSync(path)) {
+      // If file already exists, return
+      resolve(path);
+    } else if (fs.existsSync(`${path}.tmp`)) {
+      // If file is being downloaded, wait for it
+      const interval = setInterval(function () {
+        if (fs.existsSync(path)) {
+          resolve(path);
+          clearInterval(interval);
+        }
+      }, 10);
+    } else {
+      // Else, download file
+      const file = fs.createWriteStream(`${path}.tmp`);
+      http.get(`http://s3-us-west-2.amazonaws.com/ceres-geotiff-data/${uuid}.tif`, function(response) {
+        response.pipe(file);
+        file.on('finish', function() {
+          file.close(function() {
+            fs.renameSync(`${path}.tmp`, path);
+            resolve(path);
+          });
+        });
+      });
+    }
+  })
+}
+
 // Ceres imagery tiles
 app.get('/imagery/:uuid/:z/:x/:y.png', function(req, res, next) {
   // Check UUID parameter
@@ -95,7 +128,9 @@ app.get('/imagery/:uuid/:z/:x/:y.png', function(req, res, next) {
     return
   }
 
-  generateTile(req, res, next, imagery({ uuid: req.params.uuid}));
+  downloadTiff(req.params.uuid).then((path) => {
+    generateTile(req, res, next, imagery({ path }));
+  });
 });
 
 // GSSURGO (Soil) tiles
