@@ -1,13 +1,14 @@
 'use strict';
 
 const fs = require('fs');
-const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const mapnik = require('mapnik');
 const SphericalMercator = require('@mapbox/sphericalmercator');
 const Handlebars = require('handlebars');
+
+const download = require('./download');
 
 // Load config from .env file
 require('dotenv').config();
@@ -88,38 +89,6 @@ const generateTile = function(req, res, next, config) {
   });
 };
 
-// Download GeoTiff from S3 to the local cache
-const downloadTiff = function(uuid) {
-  const path = `${process.env.CACHE_PATH}/${uuid}.tiff`
-
-  return new Promise((resolve) => {
-    if (fs.existsSync(path)) {
-      // If file already exists, return
-      resolve(path);
-    } else if (fs.existsSync(`${path}.tmp`)) {
-      // If file is being downloaded, wait for it
-      const interval = setInterval(function () {
-        if (fs.existsSync(path)) {
-          resolve(path);
-          clearInterval(interval);
-        }
-      }, 10);
-    } else {
-      // Else, download file
-      const file = fs.createWriteStream(`${path}.tmp`);
-      http.get(`http://s3-us-west-2.amazonaws.com/ceres-geotiff-data/${uuid}.tif`, function(response) {
-        response.pipe(file);
-        file.on('finish', function() {
-          file.close(function() {
-            fs.renameSync(`${path}.tmp`, path);
-            resolve(path);
-          });
-        });
-      });
-    }
-  })
-}
-
 // Ceres imagery tiles
 app.get('/imagery/:uuid/:z/:x/:y.png', function(req, res, next) {
   // Check UUID parameter
@@ -128,9 +97,11 @@ app.get('/imagery/:uuid/:z/:x/:y.png', function(req, res, next) {
     return
   }
 
-  downloadTiff(req.params.uuid).then((path) => {
-    generateTile(req, res, next, imagery({ path }));
-  });
+  download(req.params.uuid)
+    .then((path) => {
+      generateTile(req, res, next, imagery({ path }));
+    })
+    .catch(next);
 });
 
 // GSSURGO (Soil) tiles
@@ -147,15 +118,18 @@ app.get('/imagery/:uuid.png', function(req, res, next) {
   // Create Mapnik object
   const map = new mapnik.Map(width, height);
 
-  // Read map config
-  map.fromString(imagery({ uuid: req.params.uuid}), function(err, map) {
-    if (err) return next(err);
+  download(req.params.uuid)
+    .then((path) => {
+      map.fromString(imagery({ uuid: req.params.uuid}), function(err, map) {
+        if (err) return next(err);
 
-    // Zoom to image extent
-    map.zoomAll();
+        // Zoom to image extent
+        map.zoomAll();
 
-    generateImage(map, res, next);
-  });
+        generateImage(map, res, next);
+      });
+    })
+    .catch(next);
 });
 
 // Server status check
