@@ -11,27 +11,22 @@ module.exports = function(uuid) {
 
     if (fs.existsSync(path)) {
       // If file already exists, return
-      console.log(id, 'Exists!');
       resolve(path);
     } else if (fs.existsSync(tmpPath) &&
       (Date.now() - fs.statSync(tmpPath).birthtimeMs) < 30000) {
         // If file is being downloaded, wait for it
-      console.log(id, 'Wait!');
       const interval = setInterval(function () {
         if (fs.existsSync(path)) {
-          console.log(id, 'Found!');
           clearInterval(interval);
           resolve(path);
         }
       }, 10);
     } else {
       // Else, download file
-      console.log(id, 'Download!');
       const file = fs.createWriteStream(`${path}.tmp`)
         .on('error', reject)
         .on('finish', function() {
           file.close(function() {
-            console.log(id, 'Finish!');
             fs.renameSync(tmpPath, path);
             resolve(path);
           });
