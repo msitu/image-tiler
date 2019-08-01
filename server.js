@@ -66,7 +66,7 @@ const generateImage = function (map, res, next) {
 }
 
 // Generate tile base on config
-function generateTile (req, res, next, config) {
+const generateTile = function (req, res, next, config) {
   // Check XYZ parameters
   if (isNaN(req.params.x) || isNaN(req.params.y) || isNaN(req.params.z)) {
     return res.status(422).send('Bad format: XYZ')
