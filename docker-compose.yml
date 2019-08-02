@@ -1,7 +1,11 @@
 version: '3'
 services:
   tiler:
-    build: .
+    build:
+        context: .
+        dockerfile: Dockerfile
+        args:
+            - ENV=development
     volumes:
       - .:/srv/tiler
     ports:

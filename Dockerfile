@@ -1,6 +1,6 @@
 FROM node:10-slim
 
-ARG NODE_ENV=development
+ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
 
 # Install Node packages
