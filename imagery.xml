@@ -10,7 +10,7 @@
     <StyleName>imagery</StyleName>
     <Datasource>
       <Parameter name="file">{{ path }}</Parameter>
-      <Parameter name="type">raster</Parameter>
+      <Parameter name="type">gdal</Parameter>
     </Datasource>
   </Layer>
 </Map>
