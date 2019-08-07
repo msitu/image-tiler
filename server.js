@@ -130,7 +130,7 @@ app.get('/imagery/:uuid.png', (req, res, next) => {
 
 // Server status check
 app.get('/status', (req, res) => {
-  res.sendStatus(200)
+  res.status(200).send(process.env.npm_package_version)
 })
 
 // Start Server
