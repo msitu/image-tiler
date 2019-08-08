@@ -133,6 +133,15 @@ app.get('/status', (req, res) => {
   res.status(200).send(process.env.npm_package_version)
 })
 
+// Default handler
+app.use((error, req, res) => {
+  if (error) {
+    res.status(500).send(error)
+  } else {
+    res.sendStatus(404)
+  }
+})
+
 // Start Server
 app.listen(process.env.PORT, process.env.HOST)
 console.info(`Running on http://${process.env.HOST}:${process.env.PORT}`)
