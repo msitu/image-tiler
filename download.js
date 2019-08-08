@@ -28,7 +28,11 @@ module.exports = function (uuid) {
             fs.renameSync(tmpPath, path)
             resolve(path)
           } catch (error) {
-            reject(error)
+            if (fs.existsSync(path)) {
+              resolve(path)
+            } else {
+              reject(error)
+            }
           }
         })
 
