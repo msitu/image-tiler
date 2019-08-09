@@ -13,7 +13,7 @@ module.exports = (uuid) => {
         resolve(path)
       } else if (fs.existsSync(tmpPath)) {
         // If file is being downloaded, wait for it
-        setTimeout(download, 100)
+        setTimeout(download, 50)
       } else {
         // Else, download file
         fs.closeSync(fs.openSync(tmpPath, 'w'))
