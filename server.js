@@ -36,7 +36,7 @@ const gssurgo = Handlebars.compile(fs.readFileSync('gssurgo.xml', 'utf8'))({
 const app = express()
 
 // Add CORS
-app.use(cors({ origin: true }))
+app.use(cors())
 
 // Add logger
 app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'))
