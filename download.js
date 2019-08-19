@@ -1,12 +1,33 @@
 const fs = require('fs')
 const http = require('http')
 
+// Delete files with access time older than 1 hour
+const clearCache = (tmpPath) => {
+  return new Promise((resolve, reject) => {
+    const now = Date.now()
+
+    fs.readdir(process.env.CACHE_PATH, (error, files) => {
+      if (error) return reject(error)
+
+      files.forEach((file) => {
+        const path = `${process.env.CACHE_PATH}/${file}`
+        const age = now - fs.statSync(path).atimeMs
+        if (age > 3600000) {
+          fs.unlinkSync(path)
+        }
+      })
+
+      fs.unlink(tmpPath, resolve)
+    })
+  })
+}
+
 // Download GeoTiff from S3 to the local cache
 module.exports = (uuid) => {
   const path = `${process.env.CACHE_PATH}/${uuid}.tiff`
   const tmpPath = `${path}.tmp`
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const download = () => {
       if (fs.existsSync(path)) {
         // If file already exists, return
@@ -19,7 +40,14 @@ module.exports = (uuid) => {
         fs.closeSync(fs.openSync(tmpPath, 'w'))
 
         const file = fs.createWriteStream(tmpPath)
-          .on('error', download)
+          .on('error', (error) => {
+            if (error.code === 'ENOSPC') {
+              // If cache dir is full, clear it!
+              clearCache(tmpPath).then(download).catch(download)
+            } else {
+              download()
+            }
+          })
           .on('finish', () => {
             fs.rename(tmpPath, path, download)
           })
