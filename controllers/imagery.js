@@ -7,14 +7,18 @@ import download from '../lib/download'
 
 const router = express.Router()
 
+// Load Mapnik datasource
 mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/gdal.input`)
 
+// Read stylesheet file
 const style = fs.readFileSync('styles/imagery.xml', 'utf8')
 
+// Create Mapnik map
 const createMap = (path, width = 256, height = 256) => {
   const map = new mapnik.Map(width, height)
   map.fromStringSync(style)
 
+  // Create layer based on imagery Geotiff file
   const layer = new mapnik.Layer('imagery')
   layer.datasource = new mapnik.Datasource({
     type: 'gdal',
@@ -27,6 +31,7 @@ const createMap = (path, width = 256, height = 256) => {
   return map
 }
 
+// Tile request handler
 router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
   checkTileParams(req, res)
   checkImageryParams(req, res)
@@ -36,12 +41,14 @@ router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
   download(uuid)
     .then((path) => {
       const map = createMap(path)
+      // Zoom to tile bounds
       map.zoomToBox(bbox(x, y, z))
       generateImage(map, res, next)
     })
     .catch(next)
 })
 
+// Single PNG handler
 router.get('/:uuid.png', (req, res, next) => {
   checkImageryParams(req, res)
 
@@ -52,6 +59,7 @@ router.get('/:uuid.png', (req, res, next) => {
   download(uuid)
     .then((path) => {
       const map = createMap(path, width, height)
+      // Zoom to GeoTiff bounds
       map.zoomAll()
       generateImage(map, res, next)
     })

@@ -15,6 +15,7 @@ app.use(cors())
 // Add logger
 app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'))
 
+// Add layer controllers
 app.use('/soil', gssurgo)
 app.use('/imagery', imagery)
 app.use('/combo', combo)

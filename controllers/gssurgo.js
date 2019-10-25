@@ -5,15 +5,21 @@ import dotenv from 'dotenv'
 
 import { bbox, generateImage, checkTileParams } from '../lib/tools'
 
+// Load variables from .env file
 dotenv.config()
 
 const router = express.Router()
 
+// Load Mapnik datasource
 mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`)
+
+// Load fonts (This layer has labels)
 mapnik.register_default_fonts()
 
+// Read stylesheet file
 const style = fs.readFileSync('styles/gssurgo.xml', 'utf8')
 
+// Create layer (We use the same object for every request)
 const layer = new mapnik.Layer('gssurgo')
 layer.datasource = new mapnik.Datasource({
   type: 'postgis',
@@ -32,6 +38,7 @@ layer.datasource = new mapnik.Datasource({
 })
 layer.styles = ['gssurgo-line', 'gssurgo-label']
 
+// Tile request handler
 router.get('/:z/:x/:y.png', (req, res, next) => {
   checkTileParams(req, res)
 
@@ -41,6 +48,7 @@ router.get('/:z/:x/:y.png', (req, res, next) => {
 
   map.fromStringSync(style)
   map.add_layer(layer)
+  // Zoom to tile bounds
   map.zoomToBox(bbox(x, y, z))
 
   generateImage(map, res, next)
