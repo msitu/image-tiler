@@ -6,11 +6,4 @@
       <RasterSymbolizer comp-op="hard-light" opacity="1" scaling="bilinear" />
     </Rule>
   </Style>
-  <Layer name="imagery" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
-    <StyleName>imagery</StyleName>
-    <Datasource>
-      <Parameter name="file">{{ path }}</Parameter>
-      <Parameter name="type">gdal</Parameter>
-    </Datasource>
-  </Layer>
 </Map>

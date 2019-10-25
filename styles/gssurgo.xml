@@ -45,22 +45,4 @@
       <LineSymbolizer stroke="#e6ef49" stroke-width="1" smooth="1" />
     </Rule>
   </Style>
-  <Layer name="gssurgo" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
-    <StyleName>gssurgo-line</StyleName>
-    <StyleName>gssurgo-label</StyleName>
-    <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="host">{{ host }}</Parameter>
-      <Parameter name="port">{{ port }}</Parameter>
-      <Parameter name="user">{{ user }}</Parameter>
-      <Parameter name="password">{{ password }}</Parameter>
-      <Parameter name="dbname">{{ dbname }}</Parameter>
-      <Parameter name="table">{{ table }}</Parameter>
-      <Parameter name="key_field">id</Parameter>
-      <Parameter name="geometry_field">geom</Parameter>
-      <Parameter name="max_size">10</Parameter>
-      <Parameter name="extent">-192.39,17.47,-58.53,72.12</Parameter>
-      <Parameter name="connect_timeout">30</Parameter>
-    </Datasource>
-  </Layer>
 </Map>
