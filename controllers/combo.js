@@ -1,10 +1,13 @@
 import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
+import json2xml from 'json2xml'
+import dotenv from 'dotenv'
 
 import { bbox, generateImage, checkTileParams, checkImageryParams } from '../lib/tools'
 import download from '../lib/download'
 
+dotenv.config()
 const router = express.Router()
 
 // Load Mapnik datasource
@@ -14,13 +17,39 @@ mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/gdal.input`)
 const imageryStyle = fs.readFileSync('styles/imagery.xml', 'utf8')
 const satelliteStyle = fs.readFileSync('styles/satellite.xml', 'utf8')
 
-const createMap = (path, width = 256, height = 256) => {
+const baseConfig = {
+  GDAL_WMS: {
+    attr: { name: 'WMS' },
+    Service: {
+      ServerUrl: `${process.env.PROXY_BASE_URL}/wms`,
+      Layers: 'satellite',
+      CRS: 'EPSG:3857',
+      Version: '1.3.0',
+      ImageFormat: 'image/png'
+    },
+    DataWindow: {
+      UpperLeftX: null,
+      UpperLeftY: null,
+      LowerRightX: null,
+      LowerRightY: null,
+      TileLevel: 20,
+      TileCountX: 1,
+      TileCountY: 1
+    },
+    BandsCount: 3,
+    Cache: {
+      Path: process.env.CACHE_PATH
+    }
+  }
+}
+
+const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
   const map = new mapnik.Map(width, height)
   map.fromStringSync(imageryStyle)
   map.fromStringSync(satelliteStyle)
 
-  // Define a buffer of 25%
-  map.bufferSize = width * 0.25
+  // Define a buffer (Default: 25%)
+  map.bufferSize = width * buffer
 
   // Create imagery layer
   const imageryLayer = new mapnik.Layer('imagery')
@@ -35,14 +64,23 @@ const createMap = (path, width = 256, height = 256) => {
   // Zoom to imagery bounds
   map.zoomAll()
 
-  // Zoom to imagery bounds + buffer, to add some satellite context
-  map.zoomToBox(map.bufferedExtent)
+  // Define specific satellite extent using imagery bounds + buffer
+  // This adds some area context to the image
+  const config = { ...baseConfig }
+  config.GDAL_WMS.DataWindow.UpperLeftX = map.bufferedExtent[0]
+  config.GDAL_WMS.DataWindow.UpperLeftY = map.bufferedExtent[1]
+  config.GDAL_WMS.DataWindow.LowerRightX = map.bufferedExtent[2]
+  config.GDAL_WMS.DataWindow.LowerRightY = map.bufferedExtent[3]
+
+  // Write config file
+  const filePath = `${path}.xml`
+  fs.writeFileSync(filePath, json2xml(config, { attributes_key: 'attr' }))
 
   // Create satellite layer
   const satelliteLayer = new mapnik.Layer('satellite', '+init=epsg:3857')
   satelliteLayer.datasource = new mapnik.Datasource({
     type: 'gdal',
-    file: 'config/satellite.xml'
+    file: filePath
   })
   satelliteLayer.styles = ['satellite']
 
@@ -75,10 +113,12 @@ router.get('/:uuid.png', (req, res, next) => {
   const width = parseInt(req.query.width) || 1024
   const height = parseInt(req.query.height) || 1024
   const uuid = req.params.uuid
+  const buffer = parseFloat(req.query.buffer) || 0.25
 
   download(uuid)
     .then((path) => {
-      const map = createMap(path, width, height)
+      const map = createMap(path, width, height, buffer)
+      map.zoomAll()
       generateImage(map, res, next)
     })
     .catch(next)
