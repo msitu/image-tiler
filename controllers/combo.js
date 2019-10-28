@@ -72,8 +72,8 @@ router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
 router.get('/:uuid.png', (req, res, next) => {
   checkImageryParams(req, res)
 
-  const width = req.query.width || 1024
-  const height = req.query.height || 1024
+  const width = parseInt(req.query.width) || 1024
+  const height = parseInt(req.query.height) || 1024
   const uuid = req.params.uuid
 
   download(uuid)
