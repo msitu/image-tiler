@@ -20,6 +20,11 @@ app.use('/soil', gssurgo)
 app.use('/imagery', imagery)
 app.use('/combo', combo)
 
+// Redirect root to status
+app.get('/', (req, res) => {
+  res.redirect('/status')
+})
+
 // Server status check
 app.get('/status', (req, res) => {
   res.status(200).send(process.env.npm_package_version)
