@@ -121,9 +121,9 @@ router.get('/:uuid.png', (req, res, next) => {
   download(uuid)
     .then((path) => {
       const map = createMap(path, width, height, buffer)
+      // Zoom to GeoTiff + Buffer
       map.zoomAll()
       generateImage(map, res, next)
-      console.log(fs.readdirSync(process.env.CACHE_PATH))
     })
     .catch(next)
 })
