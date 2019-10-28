@@ -64,17 +64,20 @@ const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
   // Zoom to imagery bounds
   map.zoomAll()
 
-  // Define specific satellite extent using imagery bounds + buffer
-  // This adds some area context to the image
-  const config = { ...baseConfig }
-  config.GDAL_WMS.DataWindow.UpperLeftX = map.bufferedExtent[0]
-  config.GDAL_WMS.DataWindow.UpperLeftY = map.bufferedExtent[1]
-  config.GDAL_WMS.DataWindow.LowerRightX = map.bufferedExtent[2]
-  config.GDAL_WMS.DataWindow.LowerRightY = map.bufferedExtent[3]
-
   // Write config file
-  const filePath = `${path}.xml`
-  fs.writeFileSync(filePath, json2xml(config, { attributes_key: 'attr' }))
+  const filePath = `${process.env.CACHE_PATH}/${map.bufferedExtent.join('_')}.xml`
+
+  if (!fs.existsSync(filePath)) {
+    // Define specific satellite extent using imagery bounds + buffer
+    // This adds some area context to the image
+    const config = { ...baseConfig }
+    config.GDAL_WMS.DataWindow.UpperLeftX = map.bufferedExtent[0]
+    config.GDAL_WMS.DataWindow.UpperLeftY = map.bufferedExtent[1]
+    config.GDAL_WMS.DataWindow.LowerRightX = map.bufferedExtent[2]
+    config.GDAL_WMS.DataWindow.LowerRightY = map.bufferedExtent[3]
+
+    fs.writeFileSync(filePath, json2xml(config, { attributes_key: 'attr' }))
+  }
 
   // Create satellite layer
   const satelliteLayer = new mapnik.Layer('satellite', '+init=epsg:3857')
@@ -120,6 +123,7 @@ router.get('/:uuid.png', (req, res, next) => {
       const map = createMap(path, width, height, buffer)
       map.zoomAll()
       generateImage(map, res, next)
+      console.log(fs.readdirSync(process.env.CACHE_PATH))
     })
     .catch(next)
 })
