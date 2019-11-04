@@ -2,9 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 
-import gssurgo from './controllers/gssurgo'
-import imagery from './controllers/imagery'
-import combo from './controllers/combo'
+import gssurgo from './routes/gssurgo'
+import imagery from './routes/imagery'
+import combo from './routes/combo'
 
 // Create Express App
 const app = express()

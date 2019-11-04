@@ -3,7 +3,7 @@ import mapnik from 'mapnik'
 import fs from 'fs'
 import dotenv from 'dotenv'
 
-import { bbox, generateImage, checkTileParams } from '../lib/tools'
+import { bbox, generateImage, respondImage, checkTileParams } from '../lib/tools'
 
 // Load variables from .env file
 dotenv.config()
@@ -45,13 +45,14 @@ router.get('/:z/:x/:y.png', (req, res, next) => {
   const { x, y, z } = req.params
 
   const map = new mapnik.Map(256, 256)
-
   map.fromStringSync(style)
   map.add_layer(layer)
+
   // Zoom to tile bounds
   map.zoomToBox(bbox(x, y, z))
 
-  generateImage(map, res, next)
+  generateImage(map)
+    .then(image => respondImage(image, res, next))
 })
 
 export default router

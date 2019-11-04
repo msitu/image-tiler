@@ -4,7 +4,10 @@ import fs from 'fs'
 import json2xml from 'json2xml'
 import dotenv from 'dotenv'
 
-import { bbox, generateImage, checkTileParams, checkImageryParams } from '../lib/tools'
+import {
+  bbox, generateImage, respondImage,
+  checkTileParams, checkImageryParams
+} from '../lib/tools'
 import download from '../lib/download'
 
 dotenv.config()
@@ -100,11 +103,14 @@ router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
   const { x, y, z, uuid } = req.params
 
   download(uuid)
-    .then((path) => {
+    .then(path => {
       const map = createMap(path)
+
       // Zoom to tile bounds
       map.zoomToBox(bbox(x, y, z))
-      generateImage(map, res, next)
+
+      generateImage(map)
+        .then(image => respondImage(image, res, next))
     })
     .catch(next)
 })
@@ -113,17 +119,23 @@ router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
 router.get('/:uuid.png', (req, res, next) => {
   checkImageryParams(req, res)
 
-  const width = parseInt(req.query.width) || 1024
-  const height = parseInt(req.query.height) || 1024
+  const size = parseInt(req.query.size) || 1024
   const uuid = req.params.uuid
-  const buffer = parseFloat(req.query.buffer) || 0.25
+  let buffer = parseFloat(req.query.buffer)
+
+  if (isNaN(buffer)) {
+    buffer = 0.25
+  }
 
   download(uuid)
-    .then((path) => {
-      const map = createMap(path, width, height, buffer)
+    .then(path => {
+      const map = createMap(path, size, size, buffer)
+
       // Zoom to GeoTiff + Buffer
       map.zoomAll()
-      generateImage(map, res, next)
+
+      generateImage(map)
+        .then(image => respondImage(image, res, next))
     })
     .catch(next)
 })
