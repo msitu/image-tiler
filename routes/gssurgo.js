@@ -1,12 +1,8 @@
 import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
-import dotenv from 'dotenv'
 
 import { bbox, generateImage, respondImage, checkTileParams } from '../lib/tools'
-
-// Load variables from .env file
-dotenv.config()
 
 const router = express.Router()
 
@@ -23,12 +19,12 @@ const style = fs.readFileSync('styles/gssurgo.xml', 'utf8')
 const layer = new mapnik.Layer('gssurgo')
 layer.datasource = new mapnik.Datasource({
   type: 'postgis',
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  dbname: process.env.DB_NAME,
-  table: process.env.DB_TABLE,
+  host: process.env.EXTRA_DB_HOST,
+  port: process.env.EXTRA_DB_PORT,
+  user: process.env.EXTRA_DB_USER,
+  password: process.env.EXTRA_DB_PASS,
+  dbname: process.env.EXTRA_DB_NAME,
+  table: process.env.EXTRA_DB_TABLE,
   extent: '-192.39,17.47,-58.53,72.12',
   geometry_field: 'geom',
   key_field: 'id',

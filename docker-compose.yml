@@ -2,10 +2,10 @@ version: '3'
 services:
   tiler:
     build:
-        context: .
-        dockerfile: Dockerfile
-        args:
-            - ENV=development
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - ENV=development
     volumes:
       - .:/srv/tiler
     ports:
@@ -13,3 +13,14 @@ services:
       - 9229:9229
     working_dir: /srv/tiler
     command: npm run dev
+    environment:
+      - PORT=80
+      - HOST=0.0.0.0
+      - EXTRA_DB_HOST=osiris-extra-tiles.cyla8ox7pgyv.us-west-2.rds.amazonaws.com
+      - EXTRA_DB_PORT=5432
+      - EXTRA_DB_USER=tiler
+      - EXTRA_DB_PASS=tiler
+      - EXTRA_DB_NAME=extra_layers
+      - EXTRA_DB_TABLE=gssurgo
+      - CACHE_PATH=/tmp
+      - PROXY_BASE_URL=https://map-proxy.ceresimaging.net

@@ -2,7 +2,6 @@ import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
 import json2xml from 'json2xml'
-import dotenv from 'dotenv'
 
 import {
   bbox, generateImage, respondImage,
@@ -10,7 +9,6 @@ import {
 } from '../lib/tools'
 import download from '../lib/download'
 
-dotenv.config()
 const router = express.Router()
 
 // Load Mapnik datasource
