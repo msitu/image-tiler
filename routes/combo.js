@@ -108,7 +108,7 @@ router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
       map.zoomToBox(bbox(x, y, z))
 
       generateImage(map)
-        .then(image => respondImage(image, res, next))
+        .then(image => respondImage(image, res))
     })
     .catch(next)
 })
@@ -133,7 +133,7 @@ router.get('/:uuid.png', (req, res, next) => {
       map.zoomAll()
 
       generateImage(map)
-        .then(image => respondImage(image, res, next))
+        .then(image => respondImage(image, res))
     })
     .catch(next)
 })

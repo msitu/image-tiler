@@ -2,7 +2,11 @@ import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
 
-import { bbox, generateImage, respondImage, checkTileParams } from '../lib/tools'
+import {
+  bbox, checkTileParams,
+  generateImage, generateVector,
+  respondImage, respondVector
+} from '../lib/tools'
 
 const router = express.Router()
 
@@ -36,9 +40,7 @@ layer.styles = ['gssurgo-line', 'gssurgo-label']
 
 // Tile request handler
 router.get('/:z/:x/:y.png', (req, res, next) => {
-  checkTileParams(req, res)
-
-  const { x, y, z } = req.params
+  const { x, y, z } = checkTileParams(req, res)
 
   const map = new mapnik.Map(256, 256)
   map.fromStringSync(style)
@@ -48,7 +50,21 @@ router.get('/:z/:x/:y.png', (req, res, next) => {
   map.zoomToBox(bbox(x, y, z))
 
   generateImage(map)
-    .then(image => respondImage(image, res, next))
+    .then(image => respondImage(image, res))
+    .catch(next)
+})
+
+// VectorTile request handler
+router.get('/:z/:x/:y.mvt', (req, res, next) => {
+  const { x, y, z } = checkTileParams(req, res)
+
+  const map = new mapnik.Map(256, 256)
+  map.fromStringSync(style)
+  map.add_layer(layer)
+
+  generateVector(map, x, y, z)
+    .then(vector => respondVector(vector, res))
+    .catch(next)
 })
 
 export default router
