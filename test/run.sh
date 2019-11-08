@@ -1,7 +1,6 @@
 #!/bin/bash
 
-export HOST=0.0.0.0
-export PORT=8888
+TILER_URL=${1:-http://0.0.0.0:8888}
 
 test()
 {
@@ -11,7 +10,7 @@ test()
 
     echo "============================="
     echo $1
-    /usr/bin/time -f "%es" curl -s "http://$HOST:$PORT/$2" | cmp test/fixtures/$3 && echo "OK"
+    /usr/bin/time -f "%es" curl -s "$TILER_URL/$2" | cmp test/fixtures/$3 && echo "OK"
 }
 
 test "Imagery Single Image" \
