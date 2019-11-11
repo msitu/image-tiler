@@ -1,6 +1,12 @@
 #!/bin/bash
 
-TILER_URL=${1:-http://0.0.0.0:8888}
+TILER_URL=${1:-http://tiler:$PORT}
+TIMEFORMAT=%Rs
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
 
 test()
 {
@@ -8,9 +14,9 @@ test()
     # $2: Resource path
     # $3: Fixture path
 
-    echo "============================="
-    echo $1
-    /usr/bin/time -f "%es" curl -s "$TILER_URL/$2" | cmp test/fixtures/$3 && echo "OK"
+    echo -e "${BLUE}$1: ${NC}$2${RED}"
+    time curl -s "$TILER_URL/$2" | cmp test/fixtures/$3 && echo -e "${GREEN}OK"
+    echo -e "=================\n${NC}"
 }
 
 test "Imagery Single Image" \

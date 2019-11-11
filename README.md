@@ -2,11 +2,8 @@
 
 ## How to make it work locally
 
-1. Generate your config file: `cp .env.example .env`
+1. Setup and run container: `docker-compose up`
 
-2. Setup and run container: `docker-compose up`
+2. Run tests: `docker-compose run tiler test/run.sh`
 
 3. Use it!
-
-    1. Ceres Imagery URL: http://0.0.0.0:8888/imagery/{geotiff_uuid}/{z}/{x}/{-y}.png
-    2. GSSURGO (Soil) URL: http://0.0.0.0:8888/soil/{z}/{x}/{-y}.png
