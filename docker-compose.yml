@@ -19,7 +19,7 @@ services:
       - EXTRA_DB_HOST=osiris-extra-tiles.cyla8ox7pgyv.us-west-2.rds.amazonaws.com
       - EXTRA_DB_PORT=5432
       - EXTRA_DB_USER=tiler
-      - EXTRA_DB_PASS=tiler
+      - EXTRA_DB_PASS=CCwd1xtcbaPIwyHjpQi6OAzG94kcxr3aJSmZtEpD
       - EXTRA_DB_NAME=extra_layers
       - EXTRA_DB_TABLE=gssurgo
       - CACHE_PATH=/tmp
