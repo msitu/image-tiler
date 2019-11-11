@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import gssurgo from './routes/gssurgo'
 import imagery from './routes/imagery'
 import combo from './routes/combo'
+import field from './routes/field'
 
 // Create Express App
 const app = express()
@@ -19,6 +20,7 @@ app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'))
 app.use('/soil', gssurgo)
 app.use('/imagery', imagery)
 app.use('/combo', combo)
+app.use('/field', field)
 
 // Redirect root to status
 app.get('/', (req, res) => {

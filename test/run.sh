@@ -32,3 +32,7 @@ test "Soil Raster Tile" \
 test "Soil Vector Tile" \
     soil/14/3364/6683.mvt \
     soil-vector-tile.mvt
+
+test "Field Vector Tile" \
+    field/92b9b844-adf4-48a8-a750-9135d9a01c0b/17/21458/50472.mvt \
+    field-vector-tile.mvt
