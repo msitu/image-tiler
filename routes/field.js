@@ -1,15 +1,17 @@
 import express from 'express'
 import mapnik from 'mapnik'
 
-import { checkTileParams, checkUUIDParam, generateVector, respondVector } from '../lib/tools'
+import {
+  checkTileParams,
+  checkUUIDParam,
+  generateVector,
+  respondVector
+} from '../lib/tools'
 
 const router = express.Router()
 
 // Load Mapnik datasource
 mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`)
-
-// Load fonts (This layer has labels)
-mapnik.register_default_fonts()
 
 // VectorTile request handler
 router.get('/:uuid/:z/:x/:y.mvt', (req, res, next) => {

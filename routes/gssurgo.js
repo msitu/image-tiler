@@ -3,9 +3,12 @@ import mapnik from 'mapnik'
 import fs from 'fs'
 
 import {
-  bbox, checkTileParams,
-  generateImage, generateVector,
-  respondImage, respondVector
+  bbox,
+  checkTileParams,
+  generateImage,
+  generateVector,
+  respondImage,
+  respondVector
 } from '../lib/tools'
 
 const router = express.Router()
@@ -42,7 +45,7 @@ layer.styles = ['gssurgo-line', 'gssurgo-label']
 router.get('/:z/:x/:y.png', (req, res, next) => {
   const { x, y, z } = checkTileParams(req, res)
 
-  const map = new mapnik.Map(256, 256)
+  const map = new mapnik.Map(256, 256, '+init=epsg:3857')
   map.fromStringSync(style)
   map.add_layer(layer)
 
@@ -58,8 +61,7 @@ router.get('/:z/:x/:y.png', (req, res, next) => {
 router.get('/:z/:x/:y.mvt', (req, res, next) => {
   const { x, y, z } = checkTileParams(req, res)
 
-  const map = new mapnik.Map(256, 256)
-  map.fromStringSync(style)
+  const map = new mapnik.Map(256, 256, '+init=epsg:3857')
   map.add_layer(layer)
 
   generateVector(map, x, y, z)

@@ -4,8 +4,11 @@ import fs from 'fs'
 import json2xml from 'json2xml'
 
 import {
-  bbox, generateImage, respondImage,
-  checkTileParams, checkImageryParams
+  bbox,
+  generateImage,
+  respondImage,
+  checkTileParams,
+  checkImageryParams
 } from '../lib/tools'
 import download from '../lib/download'
 
@@ -45,7 +48,7 @@ const baseConfig = {
 }
 
 const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
-  const map = new mapnik.Map(width, height)
+  const map = new mapnik.Map(width, height, '+init=epsg:3857')
   map.fromStringSync(imageryStyle)
   map.fromStringSync(satelliteStyle)
 

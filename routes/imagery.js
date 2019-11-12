@@ -3,8 +3,12 @@ import mapnik from 'mapnik'
 import fs from 'fs'
 
 import {
-  bbox, generateImage, respondImage, processImage,
-  checkTileParams, checkImageryParams
+  bbox,
+  checkTileParams,
+  checkImageryParams,
+  generateImage,
+  respondImage,
+  processImage
 } from '../lib/tools'
 import download from '../lib/download'
 
@@ -18,7 +22,7 @@ const style = fs.readFileSync('styles/imagery.xml', 'utf8')
 
 // Create Mapnik map
 const createMap = (path, width = 256, height = 256) => {
-  const map = new mapnik.Map(width, height)
+  const map = new mapnik.Map(width, height, '+init=epsg:3857')
   map.fromStringSync(style)
 
   // Create layer based on imagery Geotiff file

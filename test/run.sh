@@ -14,7 +14,7 @@ test()
     # $2: Resource path
     # $3: Fixture path
 
-    echo -e "${BLUE}$1: ${NC}$2${RED}"
+    echo -e "${BLUE}$1: ${NC}$TILER_URL/$2${RED}"
     time curl -s "$TILER_URL/$2" | cmp test/fixtures/$3 && echo -e "${GREEN}OK"
     echo -e "=================\n${NC}"
 }
