@@ -1,6 +1,6 @@
 {
   "name": "image-tiler",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "description": "Ceres Imaging Tile Server",
   "type": "module",
   "scripts": {
