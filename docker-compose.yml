@@ -19,19 +19,4 @@ services:
       - 9229:9229
     working_dir: /srv/tiler
     command: npm run dev
-    environment:
-      - PORT=80
-      - HOST=0.0.0.0
-      - EXTRA_DB_HOST=osiris-extra-tiles.cyla8ox7pgyv.us-west-2.rds.amazonaws.com
-      - EXTRA_DB_PORT=5432
-      - EXTRA_DB_USER=tiler
-      - EXTRA_DB_PASS=CCwd1xtcbaPIwyHjpQi6OAzG94kcxr3aJSmZtEpD
-      - EXTRA_DB_NAME=extra_layers
-      - EXTRA_DB_TABLE=gssurgo
-      - CACHE_PATH=/tmp
-      - PROXY_BASE_URL=https://map-proxy.ceresimaging.net
-      - CORE_DB_HOST=postgres
-      - CORE_DB_PORT=5432
-      - CORE_DB_USER=osiris
-      - CORE_DB_PASS=osiris
-      - CORE_DB_NAME=osiris
+    env_file: .env
