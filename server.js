@@ -14,7 +14,9 @@ const app = express()
 app.use(cors())
 
 // Add logger
+if (process.env.NODE_ENV !== 'test') {
 app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'))
+}
 
 // Add layer controllers
 app.use('/soil', gssurgo)
@@ -43,5 +45,6 @@ app.use((error, req, res, next) => {
 })
 
 // Start Server
-app.listen(process.env.PORT, process.env.HOST)
+export default app.listen(process.env.PORT, process.env.HOST, () => {
 console.info(`Running on http://${process.env.HOST}:${process.env.PORT}`)
+})
