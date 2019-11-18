@@ -2,8 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 
-import gssurgo from './routes/gssurgo'
 import imagery from './routes/imagery'
+import gssurgo from './routes/gssurgo'
 import combo from './routes/combo'
 import field from './routes/field'
 
@@ -15,12 +15,12 @@ app.use(cors())
 
 // Add logger
 if (process.env.NODE_ENV !== 'test') {
-app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'))
+  app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'))
 }
 
 // Add layer controllers
-app.use('/soil', gssurgo)
 app.use('/imagery', imagery)
+app.use('/soil', gssurgo)
 app.use('/combo', combo)
 app.use('/field', field)
 
@@ -46,5 +46,5 @@ app.use((error, req, res, next) => {
 
 // Start Server
 export default app.listen(process.env.PORT, process.env.HOST, () => {
-console.info(`Running on http://${process.env.HOST}:${process.env.PORT}`)
+  console.info(`Running on http://${process.env.HOST}:${process.env.PORT}`)
 })

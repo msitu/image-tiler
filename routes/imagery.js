@@ -2,14 +2,8 @@ import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
 
-import {
-  bbox,
-  checkTileParams,
-  checkImageryParams,
-  generateImage,
-  respondImage,
-  processImage
-} from '../lib/tools'
+import { bbox, generateImage, respondImage, processImage } from '../lib/tools'
+import { validateTile, validateUUID, validateSize } from '../lib/validation'
 import download from '../lib/download'
 
 const router = express.Router()
@@ -39,10 +33,7 @@ const createMap = (path, width = 256, height = 256) => {
 }
 
 // Tile request handler
-router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
-  checkTileParams(req, res)
-  checkImageryParams(req, res)
-
+const tileHandler = (req, res, next) => {
   const { x, y, z, uuid } = req.params
 
   download(uuid)
@@ -56,14 +47,13 @@ router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
         .then(image => respondImage(image, res))
     })
     .catch(next)
-})
+}
 
 // Single PNG handler
-router.get('/:uuid.png', (req, res, next) => {
-  checkImageryParams(req, res)
+const imageHandler = (req, res, next) => {
+  const { uuid } = req.params
 
   const size = parseInt(req.query.size) || 1024
-  const uuid = req.params.uuid
 
   download(uuid)
     .then(path => {
@@ -77,6 +67,14 @@ router.get('/:uuid.png', (req, res, next) => {
         .then(image => respondImage(image, res))
     })
     .catch(next)
-})
+}
+
+router
+  .use('/:uuid/:z/:x/:y.png', validateTile)
+  .use('/:uuid/:z/:x/:y.png', validateUUID)
+  .get('/:uuid/:z/:x/:y.png', tileHandler)
+  .use('/:uuid.png', validateUUID)
+  .use('/:uuid.png', validateSize)
+  .get('/:uuid.png', imageHandler)
 
 export default router
