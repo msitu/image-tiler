@@ -1,4 +1,4 @@
-import request from './base'
+import { request } from './base'
 
 test('index should redirect to status', async done => {
   const res = await request.get('/')
