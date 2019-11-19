@@ -3,9 +3,9 @@ import mapnik from 'mapnik'
 import fs from 'fs'
 import json2xml from 'json2xml'
 
-import { bbox, generateImage, respondImage } from '../lib/tools'
-import { validateTile, validateUUID, validateSize, validateBuffer } from '../lib/validation'
-import download from '../lib/download'
+import { bbox, downloadTiff } from '../lib/tools'
+import { generateImage, respond } from '../lib/handlers'
+import { validateTile, validateUUID, validateSize, validateBuffer } from '../lib/validators'
 
 const router = express.Router()
 
@@ -92,52 +92,55 @@ const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
 }
 
 // Tile request handler
-const tileHandler = (req, res, next) => {
-  const { x, y, z, uuid } = req.params
+const rasterLayer = (req, res, next) => {
+  const { x, y, z } = req.params
 
-  download(uuid)
-    .then(path => {
-      const map = createMap(path)
+  const map = createMap(res.locals.path)
 
-      // Zoom to tile bounds
-      map.zoomToBox(bbox(x, y, z))
+  // Zoom to tile bounds
+  map.zoomToBox(bbox(x, y, z))
 
-      generateImage(map)
-        .then(image => respondImage(image, res))
-    })
-    .catch(next)
+  res.locals.map = map
+
+  next()
 }
 
 // Single PNG handler
-const imageHandler = (req, res, next) => {
+const imageLayer = (req, res, next) => {
   const size = parseInt(req.query.size) || 1024
-  const uuid = req.params.uuid
   let buffer = parseFloat(req.query.buffer)
 
   if (isNaN(buffer)) {
     buffer = 0.25
   }
 
-  download(uuid)
-    .then(path => {
-      const map = createMap(path, size, size, buffer)
+  const map = createMap(res.locals.path, size, size, buffer)
 
-      // Zoom to GeoTiff + Buffer
-      map.zoomAll()
+  // Zoom to GeoTiff + Buffer
+  map.zoomAll()
 
-      generateImage(map)
-        .then(image => respondImage(image, res))
-    })
-    .catch(next)
+  res.locals.map = map
+
+  next()
 }
 
 router
-  .use('/:uuid/:z/:x/:y.png', validateTile)
-  .use('/:uuid/:z/:x/:y.png', validateUUID)
-  .get('/:uuid/:z/:x/:y.png', tileHandler)
-  .use('/:uuid.png', validateUUID)
-  .use('/:uuid.png', validateSize)
-  .use('/:uuid.png', validateBuffer)
-  .get('/:uuid.png', imageHandler)
+  .get('/:uuid/:z/:x/:y.png',
+    validateTile,
+    validateUUID,
+    downloadTiff,
+    rasterLayer,
+    generateImage,
+    respond
+  )
+  .get('/:uuid.png',
+    validateUUID,
+    validateSize,
+    validateBuffer,
+    downloadTiff,
+    imageLayer,
+    generateImage,
+    respond
+  )
 
 export default router

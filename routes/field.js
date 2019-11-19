@@ -1,8 +1,8 @@
 import express from 'express'
 import mapnik from 'mapnik'
 
-import { generateVector, respondVector } from '../lib/tools'
-import { validateTile, validateUUID } from '../lib/validation'
+import { generateVector, respond } from '../lib/handlers'
+import { validateTile, validateUUID } from '../lib/validators'
 
 const router = express.Router()
 
@@ -40,8 +40,8 @@ const buildDataSource = (uuid) => {
 }
 
 // VectorTile request handler
-const vectorHandler = (req, res, next) => {
-  const { x, y, z, uuid } = req.params
+const vectorLayer = (req, res, next) => {
+  const { uuid } = req.params
 
   const map = new mapnik.Map(256, 256, '+init=epsg:3857')
   const layer = new mapnik.Layer('fields')
@@ -50,16 +50,18 @@ const vectorHandler = (req, res, next) => {
 
   map.add_layer(layer)
 
-  generateVector(map, x, y, z)
-    .then(vector => {
-      respondVector(vector, res)
-    })
-    .catch(next)
+  res.locals.map = map
+
+  next()
 }
 
 router
-  .use('/:uuid/:z/:x/:y.mvt', validateTile)
-  .use('/:uuid/:z/:x/:y.mvt', validateUUID)
-  .get('/:uuid/:z/:x/:y.mvt', vectorHandler)
+  .get('/:uuid/:z/:x/:y.mvt',
+    validateTile,
+    validateUUID,
+    vectorLayer,
+    generateVector,
+    respond
+  )
 
 export default router
