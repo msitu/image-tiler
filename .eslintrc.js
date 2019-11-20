@@ -2,10 +2,12 @@ module.exports = {
   env: {
     commonjs: true,
     es6: true,
-    node: true
+    node: true,
+    'jest/globals': true
   },
   extends: [
-    'standard'
+    'standard',
+    'plugin:jest/recommended'
   ],
   globals: {
     Atomics: 'readonly',
@@ -15,5 +17,6 @@ module.exports = {
     ecmaVersion: 2018
   },
   rules: {
+    'jest/no-test-callback': off
   }
 }

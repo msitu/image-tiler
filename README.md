@@ -4,8 +4,12 @@
 
 1. Configure variables: `cp .env.example .env`
 
-1. Setup and run container: `docker-compose up`
+2. Run Osiris (Tiler uses its DB)
 
-2. Run tests: `docker-compose run tiler test/run.sh`
+3. Setup and run container: `docker-compose up`
 
-3. Use it!
+4. Use it!
+
+### Testing
+
+`doco run --rm tiler npm run test`

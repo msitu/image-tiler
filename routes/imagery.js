@@ -2,11 +2,9 @@ import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
 
-import {
-  bbox, generateImage, respondImage, processImage,
-  checkTileParams, checkImageryParams
-} from '../lib/tools'
-import download from '../lib/download'
+import { zoomBox, autocropImage, downloadTiff } from '../lib/tools'
+import { generateImage, respond } from '../lib/handlers'
+import { validateTile, validateUUID, validateSize } from '../lib/validators'
 
 const router = express.Router()
 
@@ -17,62 +15,48 @@ mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/gdal.input`)
 const style = fs.readFileSync('styles/imagery.xml', 'utf8')
 
 // Create Mapnik map
-const createMap = (path, width = 256, height = 256) => {
-  const map = new mapnik.Map(width, height)
+const createMap = (req, res, next) => {
+  const { size = 256 } = req.query
+
+  const map = new mapnik.Map(size, size, '+init=epsg:3857')
   map.fromStringSync(style)
 
   // Create layer based on imagery Geotiff file
   const layer = new mapnik.Layer('imagery')
   layer.datasource = new mapnik.Datasource({
     type: 'gdal',
-    file: path
+    file: res.locals.path
   })
   layer.styles = ['imagery']
 
   map.add_layer(layer)
 
-  return map
+  // Zoom to GeoTiff bounds
+  map.zoomAll()
+
+  res.locals.map = map
+
+  next()
 }
 
-// Tile request handler
-router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
-  checkTileParams(req, res)
-  checkImageryParams(req, res)
-
-  const { x, y, z, uuid } = req.params
-
-  download(uuid)
-    .then(path => {
-      const map = createMap(path)
-
-      // Zoom to tile bounds
-      map.zoomToBox(bbox(x, y, z))
-
-      generateImage(map)
-        .then(image => respondImage(image, res))
-    })
-    .catch(next)
-})
-
-// Single PNG handler
-router.get('/:uuid.png', (req, res, next) => {
-  checkImageryParams(req, res)
-
-  const size = parseInt(req.query.size) || 1024
-  const uuid = req.params.uuid
-
-  download(uuid)
-    .then(path => {
-      const map = createMap(path, size, size)
-
-      // Zoom to GeoTiff bounds
-      map.zoomAll()
-
-      generateImage(map)
-        .then(processImage)
-        .then(image => respondImage(image, res))
-    })
-    .catch(next)
-})
+router
+  .get('/:uuid/:z/:x/:y.png',
+    validateTile,
+    validateUUID,
+    downloadTiff,
+    createMap,
+    zoomBox,
+    generateImage,
+    respond
+  )
+  .get('/:uuid.png',
+    validateUUID,
+    validateSize,
+    downloadTiff,
+    createMap,
+    generateImage,
+    autocropImage,
+    respond
+  )
 
 export default router

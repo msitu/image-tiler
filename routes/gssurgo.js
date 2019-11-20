@@ -2,11 +2,9 @@ import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
 
-import {
-  bbox, checkTileParams,
-  generateImage, generateVector,
-  respondImage, respondVector
-} from '../lib/tools'
+import { zoomBox } from '../lib/tools'
+import { generateImage, generateVector, respond } from '../lib/handlers'
+import { validateTile } from '../lib/validators'
 
 const router = express.Router()
 
@@ -38,33 +36,29 @@ layer.datasource = new mapnik.Datasource({
 })
 layer.styles = ['gssurgo-line', 'gssurgo-label']
 
-// Tile request handler
-router.get('/:z/:x/:y.png', (req, res, next) => {
-  const { x, y, z } = checkTileParams(req, res)
-
-  const map = new mapnik.Map(256, 256)
+const createMap = (req, res, next) => {
+  const map = new mapnik.Map(256, 256, '+init=epsg:3857')
   map.fromStringSync(style)
   map.add_layer(layer)
 
-  // Zoom to tile bounds
-  map.zoomToBox(bbox(x, y, z))
+  res.locals.map = map
 
-  generateImage(map)
-    .then(image => respondImage(image, res))
-    .catch(next)
-})
+  next()
+}
 
-// VectorTile request handler
-router.get('/:z/:x/:y.mvt', (req, res, next) => {
-  const { x, y, z } = checkTileParams(req, res)
-
-  const map = new mapnik.Map(256, 256)
-  map.fromStringSync(style)
-  map.add_layer(layer)
-
-  generateVector(map, x, y, z)
-    .then(vector => respondVector(vector, res))
-    .catch(next)
-})
+router
+  .get('/:z/:x/:y.png',
+    validateTile,
+    createMap,
+    zoomBox,
+    generateImage,
+    respond
+  )
+  .get('/:z/:x/:y.mvt',
+    validateTile,
+    createMap,
+    generateVector,
+    respond
+  )
 
 export default router

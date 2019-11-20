@@ -3,11 +3,9 @@ import mapnik from 'mapnik'
 import fs from 'fs'
 import json2xml from 'json2xml'
 
-import {
-  bbox, generateImage, respondImage,
-  checkTileParams, checkImageryParams
-} from '../lib/tools'
-import download from '../lib/download'
+import { zoomBox, downloadTiff } from '../lib/tools'
+import { generateImage, respond } from '../lib/handlers'
+import { validateTile, validateUUID, validateSize, validateBuffer } from '../lib/validators'
 
 const router = express.Router()
 
@@ -44,19 +42,20 @@ const baseConfig = {
   }
 }
 
-const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
-  const map = new mapnik.Map(width, height)
+const createMap = (req, res, next) => {
+  let { size = 256, buffer = 0.25 } = req.query
+
+  const map = new mapnik.Map(size, size, '+init=epsg:3857')
   map.fromStringSync(imageryStyle)
   map.fromStringSync(satelliteStyle)
 
-  // Define a buffer (Default: 25%)
-  map.bufferSize = width * buffer
+  map.bufferSize = size * buffer
 
   // Create imagery layer
   const imageryLayer = new mapnik.Layer('imagery')
   imageryLayer.datasource = new mapnik.Datasource({
     type: 'gdal',
-    file: path
+    file: res.locals.path
   })
   imageryLayer.styles = ['imagery']
 
@@ -90,52 +89,32 @@ const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
 
   map.add_layer(satelliteLayer)
 
-  return map
+  // Zoom to GeoTiff + Buffer
+  map.zoomAll()
+
+  res.locals.map = map
+
+  next()
 }
 
-// Tile request handler
-router.get('/:uuid/:z/:x/:y.png', (req, res, next) => {
-  checkTileParams(req, res)
-  checkImageryParams(req, res)
-
-  const { x, y, z, uuid } = req.params
-
-  download(uuid)
-    .then(path => {
-      const map = createMap(path)
-
-      // Zoom to tile bounds
-      map.zoomToBox(bbox(x, y, z))
-
-      generateImage(map)
-        .then(image => respondImage(image, res))
-    })
-    .catch(next)
-})
-
-// Single PNG handler
-router.get('/:uuid.png', (req, res, next) => {
-  checkImageryParams(req, res)
-
-  const size = parseInt(req.query.size) || 1024
-  const uuid = req.params.uuid
-  let buffer = parseFloat(req.query.buffer)
-
-  if (isNaN(buffer)) {
-    buffer = 0.25
-  }
-
-  download(uuid)
-    .then(path => {
-      const map = createMap(path, size, size, buffer)
-
-      // Zoom to GeoTiff + Buffer
-      map.zoomAll()
-
-      generateImage(map)
-        .then(image => respondImage(image, res))
-    })
-    .catch(next)
-})
+router
+  .get('/:uuid/:z/:x/:y.png',
+    validateTile,
+    validateUUID,
+    downloadTiff,
+    createMap,
+    zoomBox,
+    generateImage,
+    respond
+  )
+  .get('/:uuid.png',
+    validateUUID,
+    validateSize,
+    validateBuffer,
+    downloadTiff,
+    createMap,
+    generateImage,
+    respond
+  )
 
 export default router
