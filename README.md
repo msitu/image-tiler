@@ -6,8 +6,10 @@
 
 2. Run Osiris (Tiler uses its DB)
 
-3. Run tests: `doco run --rm tiler npm run test`
+3. Setup and run container: `docker-compose up`
 
-4. Setup and run container: `docker-compose up`
+4. Use it!
 
-5. Use it!
+### Testing
+
+`doco run --rm tiler npm run test`
