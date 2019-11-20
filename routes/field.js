@@ -39,8 +39,7 @@ const buildDataSource = (uuid) => {
   })
 }
 
-// VectorTile request handler
-const vectorLayer = (req, res, next) => {
+const createMap = (req, res, next) => {
   const { uuid } = req.params
 
   const map = new mapnik.Map(256, 256, '+init=epsg:3857')
@@ -59,7 +58,7 @@ router
   .get('/:uuid/:z/:x/:y.mvt',
     validateTile,
     validateUUID,
-    vectorLayer,
+    createMap,
     generateVector,
     respond
   )

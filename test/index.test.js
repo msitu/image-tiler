@@ -1,27 +1,35 @@
-import { request } from './base'
+import app from '../server'
+import supertest from 'supertest'
 
-test('index should redirect to status', async done => {
-  const res = await request.get('/')
+const request = supertest(app)
 
-  expect(res.status).toBe(302)
-  expect(res.header.location).toBe('/status')
+describe('main routes', () => {
 
-  done()
-})
+  test('index should redirect to status', async done => {
+    const res = await request.get('/')
 
-test('status should return current version', async done => {
-  const res = await request.get('/status')
+    expect(res.status).toBe(302)
+    expect(res.header.location).toBe('/status')
 
-  expect(res.status).toBe(200)
-  expect(res.text).toBe(process.env.npm_package_version)
+    done()
+  })
 
-  done()
-})
+  test('status should return current version', async done => {
+    const res = await request.get('/status')
 
-test('url with bad format should return a 404 error', async done => {
-  const res = await request.get('/something')
+    expect(res.status).toBe(200)
+    expect(res.text).toBe(process.env.npm_package_version)
 
-  expect(res.status).toBe(404)
+    done()
+  })
 
-  done()
+  test('url with bad format should return a 404 error', async done => {
+    const res = await request.get('/something')
+
+    expect(res.status).toBe(404)
+
+    done()
+  })
+
+  afterAll(app.close)
 })

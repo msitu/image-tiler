@@ -1,19 +1,31 @@
-import { request, fixture } from './base'
+import app from '../server'
+import supertest from 'supertest'
+import fs from 'fs'
 
+jest.setTimeout(60000)
+
+const request = supertest(app)
+const fixture = fs.readFileSync
 const base = 'soil'
 
-test('should return a raster tile', async done => {
-  const res = await request.get(`/${base}/14/3364/6683.png`)
+describe('soil routes', () => {
 
-  expect(res.body).toEqual(fixture('test/fixtures/soil-raster-tile.png'))
+  test('should return a raster tile', async done => {
+    const res = await request.get(`/${base}/14/3364/6683.png`)
 
-  done()
-})
+    expect(res.body.equals(fixture('test/fixtures/soil-raster-tile.png'))).toBeTruthy()
 
-test('should return a vector tile', async done => {
-  const res = await request.get(`/${base}/14/3364/6683.mvt`).responseType('arraybuffer')
+    done()
+  })
 
-  expect(res.body).toEqual(fixture('test/fixtures/soil-vector-tile.mvt'))
+  test('should return a vector tile', async done => {
+    const res = await request.get(`/${base}/14/3364/6683.mvt`).responseType('arraybuffer')
 
-  done()
+    expect(res.body.equals(fixture('test/fixtures/soil-vector-tile.mvt'))).toBeTruthy()
+
+    done()
+  })
+
+  afterAll(app.close)
+
 })

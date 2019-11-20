@@ -2,7 +2,7 @@ import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
 
-import { bbox } from '../lib/tools'
+import { zoomBox } from '../lib/tools'
 import { generateImage, generateVector, respond } from '../lib/handlers'
 import { validateTile } from '../lib/validators'
 
@@ -36,25 +36,9 @@ layer.datasource = new mapnik.Datasource({
 })
 layer.styles = ['gssurgo-line', 'gssurgo-label']
 
-// Tile request handler
-const rasterLayer = (req, res, next) => {
-  const { x, y, z } = req.params
-
+const createMap = (req, res, next) => {
   const map = new mapnik.Map(256, 256, '+init=epsg:3857')
   map.fromStringSync(style)
-  map.add_layer(layer)
-
-  // Zoom to tile bounds
-  map.zoomToBox(bbox(x, y, z))
-
-  res.locals.map = map
-
-  next()
-}
-
-// VectorTile request handler
-const vectorLayer = (req, res, next) => {
-  const map = new mapnik.Map(256, 256, '+init=epsg:3857')
   map.add_layer(layer)
 
   res.locals.map = map
@@ -65,13 +49,14 @@ const vectorLayer = (req, res, next) => {
 router
   .get('/:z/:x/:y.png',
     validateTile,
-    rasterLayer,
+    createMap,
+    zoomBox,
     generateImage,
     respond
   )
   .get('/:z/:x/:y.mvt',
     validateTile,
-    vectorLayer,
+    createMap,
     generateVector,
     respond
   )

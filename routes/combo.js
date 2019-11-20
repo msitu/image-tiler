@@ -3,7 +3,7 @@ import mapnik from 'mapnik'
 import fs from 'fs'
 import json2xml from 'json2xml'
 
-import { bbox, downloadTiff } from '../lib/tools'
+import { zoomBox, downloadTiff } from '../lib/tools'
 import { generateImage, respond } from '../lib/handlers'
 import { validateTile, validateUUID, validateSize, validateBuffer } from '../lib/validators'
 
@@ -42,19 +42,20 @@ const baseConfig = {
   }
 }
 
-const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
-  const map = new mapnik.Map(width, height, '+init=epsg:3857')
+const createMap = (req, res, next) => {
+  let { size = 256, buffer = 0.25 } = req.query
+
+  const map = new mapnik.Map(size, size, '+init=epsg:3857')
   map.fromStringSync(imageryStyle)
   map.fromStringSync(satelliteStyle)
 
-  // Define a buffer (Default: 25%)
-  map.bufferSize = width * buffer
+  map.bufferSize = size * buffer
 
   // Create imagery layer
   const imageryLayer = new mapnik.Layer('imagery')
   imageryLayer.datasource = new mapnik.Datasource({
     type: 'gdal',
-    file: path
+    file: res.locals.path
   })
   imageryLayer.styles = ['imagery']
 
@@ -88,34 +89,6 @@ const createMap = (path, width = 256, height = 256, buffer = 0.25) => {
 
   map.add_layer(satelliteLayer)
 
-  return map
-}
-
-// Tile request handler
-const rasterLayer = (req, res, next) => {
-  const { x, y, z } = req.params
-
-  const map = createMap(res.locals.path)
-
-  // Zoom to tile bounds
-  map.zoomToBox(bbox(x, y, z))
-
-  res.locals.map = map
-
-  next()
-}
-
-// Single PNG handler
-const imageLayer = (req, res, next) => {
-  const size = parseInt(req.query.size) || 1024
-  let buffer = parseFloat(req.query.buffer)
-
-  if (isNaN(buffer)) {
-    buffer = 0.25
-  }
-
-  const map = createMap(res.locals.path, size, size, buffer)
-
   // Zoom to GeoTiff + Buffer
   map.zoomAll()
 
@@ -129,7 +102,8 @@ router
     validateTile,
     validateUUID,
     downloadTiff,
-    rasterLayer,
+    createMap,
+    zoomBox,
     generateImage,
     respond
   )
@@ -138,7 +112,7 @@ router
     validateSize,
     validateBuffer,
     downloadTiff,
-    imageLayer,
+    createMap,
     generateImage,
     respond
   )
