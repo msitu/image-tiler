@@ -14,7 +14,7 @@ describe('combo routes', () => {
   test('should return a raster tile', async done => {
     const res = await request.get(`/${base}/${uuid}/17/21455/50471.png`)
 
-    expect(res.body.equals(fixture('test/fixtures/combo-raster-tile..png'))).toBeTruthy()
+    expect(res.body.equals(fixture('test/fixtures/combo-raster-tile.png'))).toBeTruthy()
 
     done()
   })
@@ -22,7 +22,7 @@ describe('combo routes', () => {
   test('should return a single image', async done => {
     const res = await request.get(`/${base}/${uuid}.png`)
 
-    expect(res.body.equals(fixture('test/fixtures/combo-image..png'))).toBeTruthy()
+    expect(res.body.equals(fixture('test/fixtures/combo-image.png'))).toBeTruthy()
 
     done()
   })
@@ -30,7 +30,7 @@ describe('combo routes', () => {
   test('should return a single image with specific size', async done => {
     const res = await request.get(`/${base}/${uuid}.png?size=512`)
 
-    expect(res.body.equals(fixture('test/fixtures/combo-image-size..png'))).toBeTruthy()
+    expect(res.body.equals(fixture('test/fixtures/combo-image-size.png'))).toBeTruthy()
 
     done()
   })
@@ -38,7 +38,7 @@ describe('combo routes', () => {
   test('should return a single image with specific buffer', async done => {
     const res = await request.get(`/${base}/${uuid}.png?buffer=0.1`)
 
-    expect(res.body.equals(fixture('test/fixtures/combo-image-buffer..png'))).toBeTruthy()
+    expect(res.body.equals(fixture('test/fixtures/combo-image-buffer.png'))).toBeTruthy()
 
     done()
   })
