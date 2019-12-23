@@ -3,9 +3,9 @@ import mapnik from 'mapnik'
 import fs from 'fs'
 import json2xml from 'json2xml'
 
-import { zoomBox, downloadTiff } from '../lib/tools'
-import { generateImage, respond } from '../lib/handlers'
-import { validateTile, validateUUID, validateSize, validateBuffer } from '../lib/validators'
+import { zoomBox, downloadTiff } from '../middlewares/tools'
+import { rasterLayer, respond } from '../middlewares/layers'
+import { validateTile, validateUUID, validateSize, validateBuffer } from '../middlewares/validators'
 
 const router = express.Router()
 
@@ -104,7 +104,7 @@ router
     downloadTiff,
     createMap,
     zoomBox,
-    generateImage,
+    rasterLayer,
     respond
   )
   .get('/:uuid.png',
@@ -113,7 +113,7 @@ router
     validateBuffer,
     downloadTiff,
     createMap,
-    generateImage,
+    rasterLayer,
     respond
   )
 

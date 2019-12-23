@@ -2,9 +2,9 @@ import express from 'express'
 import mapnik from 'mapnik'
 import fs from 'fs'
 
-import { zoomBox } from '../lib/tools'
-import { generateImage, generateVector, respond } from '../lib/handlers'
-import { validateTile } from '../lib/validators'
+import { zoomBox } from '../middlewares/tools'
+import { rasterLayer, vectorLayer, respond } from '../middlewares/layers'
+import { validateTile } from '../middlewares/validators'
 
 const router = express.Router()
 
@@ -51,13 +51,13 @@ router
     validateTile,
     createMap,
     zoomBox,
-    generateImage,
+    rasterLayer,
     respond
   )
   .get('/:z/:x/:y.mvt',
     validateTile,
     createMap,
-    generateVector,
+    vectorLayer,
     respond
   )
 

@@ -11,7 +11,7 @@ export const respond = (req, res, next) => {
 }
 
 // Generate PNG
-export const generateImage = (req, res, next) => {
+export const rasterLayer = (req, res, next) => {
   const { map } = res.locals
 
   map.render(
@@ -33,7 +33,7 @@ export const generateImage = (req, res, next) => {
 }
 
 // Generate Vector Tile
-export const generateVector = (req, res, next) => {
+export const vectorLayer = (req, res, next) => {
   const { map } = res.locals
   const { x, y, z } = req.params
 

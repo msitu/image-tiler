@@ -1,8 +1,8 @@
 import express from 'express'
 import mapnik from 'mapnik'
 
-import { generateVector, respond } from '../lib/handlers'
-import { validateTile, validateUUID } from '../lib/validators'
+import { vectorLayer, respond } from '../middlewares/layers'
+import { validateTile, validateUUID } from '../middlewares/validators'
 
 const router = express.Router()
 
@@ -59,7 +59,7 @@ router
     validateTile,
     validateUUID,
     createMap,
-    generateVector,
+    vectorLayer,
     respond
   )
 
