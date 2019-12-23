@@ -57,7 +57,11 @@ const clearCache = (tmpPath) => {
 
 // Download GeoTiff from S3 to the local cache
 export const downloadTiff = (req, res, next) => {
-  const { uuid } = req.params
+  const {
+    uuid,
+    bucket = 'ceres-geotiff-data',
+    region = 'us-west-2'
+  } = req.params
   const path = `${process.env.CACHE_PATH}/${uuid}.tiff`
   const tmpPath = `${path}.tmp`
 
@@ -86,7 +90,7 @@ export const downloadTiff = (req, res, next) => {
           fs.rename(tmpPath, path, download)
         })
 
-      http.get(`http://s3-us-west-2.amazonaws.com/ceres-geotiff-data/${uuid}.tif`, (response) => {
+      http.get(`http://s3-${region}.amazonaws.com/${bucket}/${uuid}.tif`, (response) => {
         response.pipe(file)
       }).on('error', download)
     }
