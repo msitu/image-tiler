@@ -57,13 +57,21 @@ const clearCache = (tmpPath) => {
 
 // Download GeoTiff from S3 to the local cache
 export const downloadTiff = (req, res, next) => {
+  const { uuid } = req.params
   const {
-    uuid,
     bucket = 'ceres-geotiff-data',
     region = 'us-west-2'
-  } = req.params
-  const path = `${process.env.CACHE_PATH}/${uuid}.tiff`
+  } = req.query
+
+  const dir = `${process.env.CACHE_PATH}/${region}/${bucket}`
+  const path = `${dir}/${uuid}.tiff`
   const tmpPath = `${path}.tmp`
+  const url = `http://s3-${region}.amazonaws.com/${bucket}/${uuid}.tif`
+
+  const fail = () => {
+    res.status(404).send('Error downloading imagery, please check params')
+    fs.unlinkSync(tmpPath)
+  }
 
   const download = () => {
     if (fs.existsSync(path)) {
@@ -90,11 +98,23 @@ export const downloadTiff = (req, res, next) => {
           fs.rename(tmpPath, path, download)
         })
 
-      http.get(`http://s3-${region}.amazonaws.com/${bucket}/${uuid}.tif`, (response) => {
-        response.pipe(file)
-      }).on('error', download)
+      http.get(url, (response) => {
+        if (response.statusCode != 200) {
+          fail()
+        } else {
+          response.pipe(file)
+        }
+      }).on('error', (error) => {
+        if (error.code === 'ENOTFOUND') {
+          fail()
+        } else {
+          download()
+        }
+      })
     }
   }
 
+  // Create directory and trigger download
+  fs.mkdirSync(dir, { recursive: true })
   download()
 }
