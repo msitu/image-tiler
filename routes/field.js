@@ -15,7 +15,7 @@ const buildQuery = (uuid) => {
       SUM(auto_acres) AS acres,
       ST_Collect(geometry) AS geom
     FROM customers_geo cg
-    JOIN published_imagery_userfield piu
+    JOIN published_imagery_displayfield piu
       ON piu.source_field_id = cg.farm_id
     WHERE piu.id = '${uuid}'
     GROUP BY piu.id
