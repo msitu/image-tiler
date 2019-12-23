@@ -38,7 +38,7 @@ app.get('/status', (req, res) => {
 app.use((error, req, res, next) => {
   if (error) {
     console.error(error)
-    res.status(500).send(error)
+    res.sendStatus(500)
   } else {
     res.sendStatus(404)
   }
