@@ -1,43 +1,11 @@
 import express from 'express'
-import mapnik from 'mapnik'
-import fs from 'fs'
 
 import { zoomBox, autocropImage, downloadTiff } from '../middlewares/tools'
-import { rasterLayer, respond } from '../middlewares/layers'
+import { createMap, rasterResponse, respond } from '../middlewares/map'
 import { validateTile, validateUUID, validateSize } from '../middlewares/validators'
+import { imageryLayer } from '../middlewares/imagery'
 
 const router = express.Router()
-
-// Load Mapnik datasource
-mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/gdal.input`)
-
-// Read stylesheet file
-const style = fs.readFileSync('styles/imagery.xml', 'utf8')
-
-// Create Mapnik map
-const createMap = (req, res, next) => {
-  const { size = 256 } = req.query
-
-  const map = new mapnik.Map(size, size, '+init=epsg:3857')
-  map.fromStringSync(style)
-
-  // Create layer based on imagery Geotiff file
-  const layer = new mapnik.Layer('imagery')
-  layer.datasource = new mapnik.Datasource({
-    type: 'gdal',
-    file: res.locals.path
-  })
-  layer.styles = ['imagery']
-
-  map.add_layer(layer)
-
-  // Zoom to GeoTiff bounds
-  map.zoomAll()
-
-  res.locals.map = map
-
-  next()
-}
 
 router
   .get('/:uuid/:z/:x/:y.png',
@@ -45,8 +13,9 @@ router
     validateUUID,
     downloadTiff,
     createMap,
+    imageryLayer,
     zoomBox,
-    rasterLayer,
+    rasterResponse,
     respond
   )
   .get('/:uuid.png',
@@ -54,7 +23,8 @@ router
     validateSize,
     downloadTiff,
     createMap,
-    rasterLayer,
+    imageryLayer,
+    rasterResponse,
     autocropImage,
     respond
   )

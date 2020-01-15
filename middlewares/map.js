@@ -11,7 +11,7 @@ export const respond = (req, res, next) => {
 }
 
 // Generate PNG
-export const rasterLayer = (req, res, next) => {
+export const rasterResponse = (req, res, next) => {
   const { map } = res.locals
 
   map.render(
@@ -33,7 +33,7 @@ export const rasterLayer = (req, res, next) => {
 }
 
 // Generate Vector Tile
-export const vectorLayer = (req, res, next) => {
+export const vectorResponse = (req, res, next) => {
   const { map } = res.locals
   const { x, y, z } = req.params
 
@@ -53,4 +53,15 @@ export const vectorLayer = (req, res, next) => {
       })
     }
   )
+}
+
+// Create Mapnik Map
+export const createMap = (req, res, next) => {
+  let { size = 256 } = req.query
+
+  const map = new mapnik.Map(size, size, '+init=epsg:3857')
+
+  res.locals.map = map
+
+  next()
 }
