@@ -6,6 +6,7 @@ import imagery from './routes/imagery'
 import gssurgo from './routes/gssurgo'
 import combo from './routes/combo'
 import field from './routes/field'
+import marker from './routes/marker'
 
 // Create Express App
 const app = express()
@@ -23,6 +24,7 @@ app.use('/imagery', imagery)
 app.use('/soil', gssurgo)
 app.use('/combo', combo)
 app.use('/field', field)
+app.use('/marker', marker)
 
 // Redirect root to status
 app.get('/', (req, res) => {

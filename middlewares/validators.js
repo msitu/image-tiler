@@ -23,13 +23,14 @@ export const validateImagery = (req, res, next) => {
 
   return res.status(422).send(`Bad format: Imagery imagery = ${req.params.imagery}`)
 }
-// Validate UUID parameter
-export const validateUUID = (req, res, next) => {
-  if (validator.isUUID(req.params.uuid)) {
+
+// Validate Flight imagery parameter
+export const validateFlight = (req, res, next) => {
+  if (validator.isUUID(req.params.flight)) {
     return next()
   }
 
-  return res.status(422).send(`Bad format: UUID = ${req.params.uuid}`)
+  return res.status(422).send(`Bad format: Flight imagery = ${req.params.flight}`)
 }
 
 // Validate Size query
