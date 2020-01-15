@@ -3,7 +3,7 @@ import mapnik from 'mapnik'
 // Load Mapnik datasource
 mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`)
 
-const buildQuery = (uuid) => {
+const buildQuery = (imagery) => {
   return `(
     SELECT piu.id AS id,
       SUM(auto_acres) AS acres,
@@ -11,12 +11,12 @@ const buildQuery = (uuid) => {
     FROM customers_geo cg
     JOIN published_imagery_displayfield piu
       ON piu.source_field_id = cg.farm_id
-    WHERE piu.id = '${uuid}'
+    WHERE piu.id = '${imagery}'
     GROUP BY piu.id
   ) AS fields`
 }
 
-const buildDataSource = (uuid) => {
+const buildDataSource = (imagery) => {
   return new mapnik.Datasource({
     type: 'postgis',
     host: process.env.CORE_DB_HOST,
@@ -24,7 +24,7 @@ const buildDataSource = (uuid) => {
     user: process.env.CORE_DB_USER,
     password: process.env.CORE_DB_PASS,
     dbname: process.env.CORE_DB_NAME,
-    table: buildQuery(uuid),
+    table: buildQuery(imagery),
     extent_from_subquery: true,
     geometry_field: 'geom',
     srid: 4326,
@@ -35,11 +35,11 @@ const buildDataSource = (uuid) => {
 
 export const fieldLayer = (req, res, next) => {
   const { map } = res.locals
-  const { uuid } = req.params
+  const { imagery } = req.params
 
   const layer = new mapnik.Layer('fields')
 
-  layer.datasource = buildDataSource(uuid)
+  layer.datasource = buildDataSource(imagery)
 
   map.add_layer(layer)
 

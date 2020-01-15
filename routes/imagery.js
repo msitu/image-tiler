@@ -2,15 +2,15 @@ import express from 'express'
 
 import { zoomBox, autocropImage, downloadTiff } from '../middlewares/tools'
 import { createMap, rasterResponse, respond } from '../middlewares/map'
-import { validateTile, validateUUID, validateSize } from '../middlewares/validators'
+import { validateTile, validateImagery, validateSize } from '../middlewares/validators'
 import { imageryLayer } from '../middlewares/imagery'
 
 const router = express.Router()
 
 router
-  .get('/:uuid/:z/:x/:y.png',
+  .get('/:imagery/:z/:x/:y.png',
     validateTile,
-    validateUUID,
+    validateImagery,
     downloadTiff,
     createMap,
     imageryLayer,
@@ -18,8 +18,8 @@ router
     rasterResponse,
     respond
   )
-  .get('/:uuid.png',
-    validateUUID,
+  .get('/:imagery.png',
+    validateImagery,
     validateSize,
     downloadTiff,
     createMap,

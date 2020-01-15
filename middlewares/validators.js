@@ -15,6 +15,14 @@ export const validateTile = (req, res, next) => {
   return res.status(422).send(`Bad format: XYZ = ${req.params.x}, ${req.params.y}, ${req.params.z}`)
 }
 
+// Validate Imagery imagery parameter
+export const validateImagery = (req, res, next) => {
+  if (validator.isUUID(req.params.imagery)) {
+    return next()
+  }
+
+  return res.status(422).send(`Bad format: Imagery imagery = ${req.params.imagery}`)
+}
 // Validate UUID parameter
 export const validateUUID = (req, res, next) => {
   if (validator.isUUID(req.params.uuid)) {
