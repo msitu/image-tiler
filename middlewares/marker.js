@@ -22,7 +22,7 @@ const buildQuery = (flight, user) => {
       ON ptf.drawingfeature_ptr_id = dwf.id
     WHERE dwf.flight_id = '${flight}'
       AND dwf.type = 'Point'
-      ${user ? `AND dwf.user_profile_id = '${user}'` : ''}
+      ${user ? `AND (dwf.is_private = false OR dwf.user_profile_id = '${user}')` : ''}
     ORDER BY dwf.date_created
   ) AS markers`
 }
