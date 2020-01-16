@@ -10,7 +10,7 @@ const style = fs.readFileSync('styles/marker.xml', 'utf8')
 // Load Mapnik datasource
 mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`)
 
-const buildQuery = (flight) => {
+const buildQuery = (flight, user) => {
   return `(
     SELECT dwf.id AS id,
       ptf.feature AS geom,
@@ -22,11 +22,12 @@ const buildQuery = (flight) => {
       ON ptf.drawingfeature_ptr_id = dwf.id
     WHERE dwf.flight_id = '${flight}'
       AND dwf.type = 'Point'
+      ${user ? `AND dwf.user_profile_id = '${user}'` : ''}
     ORDER BY dwf.date_created
   ) AS markers`
 }
 
-const buildDataSource = (flight) => {
+const buildDataSource = (flight, user) => {
   return new mapnik.Datasource({
     type: 'postgis',
     host: process.env.CORE_DB_HOST,
@@ -34,7 +35,7 @@ const buildDataSource = (flight) => {
     user: process.env.CORE_DB_USER,
     password: process.env.CORE_DB_PASS,
     dbname: process.env.CORE_DB_NAME,
-    table: buildQuery(flight),
+    table:  buildQuery(flight, user),
     extent_from_subquery: true,
     geometry_field: 'geom',
     srid: 4326,
@@ -45,12 +46,13 @@ const buildDataSource = (flight) => {
 
 export const markerLayer = (req, res, next) => {
   const { flight } = req.params
+  const { user } = req.query
   const { map } = res.locals
 
   map.fromStringSync(style)
   const layer = new mapnik.Layer('markers')
 
-  layer.datasource = buildDataSource(flight)
+  layer.datasource = buildDataSource(flight, user)
   layer.styles = ['marker-icon', 'marker-label']
 
   map.add_layer(layer)
