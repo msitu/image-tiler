@@ -47,7 +47,7 @@ const buildQuery = (flight, user, imagery) => {
         )
       )
       ${user ? `AND (dwf.is_private = false OR dwf.user_profile_id = '${user}')` : ''}
-    ORDER BY dwf.date_created
+    ORDER BY dwf.id
   ) AS markers`
 }
 
