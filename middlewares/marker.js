@@ -77,7 +77,7 @@ export const markerLayer = (req, res, next) => {
   const layer = new mapnik.Layer('markers')
 
   layer.datasource = buildDataSource(flight, user, imagery)
-  layer.styles = ['marker-icon', 'marker-label']
+  layer.styles = ['marker-icon']
 
   map.add_layer(layer)
 
