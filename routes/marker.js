@@ -8,16 +8,18 @@ import { markerLayer } from '../middlewares/marker'
 const router = express.Router()
 
 router
-  .get('/:flight/:z/:x/:y.mvt',
+  .get('/:imagery/:flight/:z/:x/:y.mvt',
     validateTile,
+    validateImagery,
     validateFlight,
     createMap,
     markerLayer,
     vectorResponse,
     respond
   )
-  .get('/:flight/:z/:x/:y.png',
+  .get('/:imagery/:flight/:z/:x/:y.png',
     validateTile,
+    validateImagery,
     validateFlight,
     createMap,
     markerLayer,
