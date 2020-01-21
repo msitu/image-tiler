@@ -1,7 +1,7 @@
 import express from 'express'
 
 import { createMap, vectorResponse, rasterResponse, respond } from '../middlewares/map'
-import { validateTile, validateFlight } from '../middlewares/validators'
+import { validateTile, validateImagery, validateFlight } from '../middlewares/validators'
 import { zoomBox } from '../middlewares/tools'
 import { markerLayer } from '../middlewares/marker'
 
