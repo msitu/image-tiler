@@ -1,6 +1,7 @@
 import app from '../server'
 import supertest from 'supertest'
 import fs from 'fs'
+import http from 'http'
 
 jest.setTimeout(60000)
 

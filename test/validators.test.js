@@ -55,6 +55,14 @@ describe('validators', () => {
     done()
   })
 
+  test('should return an error if flight UUID format is wrong', async done => {
+    const res = await request.get(`/${base}/${imagery}/AA-7326e81d-40b0-4053-8f33-bd22f9a53df9.png`)
+
+    expect(res.status).toBe(422)
+
+    done()
+  })
+
   afterAll(app.close)
 
 })
