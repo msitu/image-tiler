@@ -43,6 +43,17 @@ describe('combo routes', () => {
     done()
   })
 
+  test('should return a single image with markers', async done => {
+    const imagery = 'c1923c08-5c61-420e-b569-5e00baf0c114'
+    const flight = 'ebe0d55b-e957-44ab-8240-7202150a3789'
+
+    const res = await request.get(`/${base}/${imagery}/${flight}.png`)
+
+    expect(res.body.equals(fixture('test/fixtures/combo-marker.png'))).toBeTruthy()
+
+    done()
+  })
+
   afterAll(app.close)
 
 })
