@@ -3,7 +3,7 @@ version: '3'
 networks:
   default:
     external:
-      name: osiris_default
+      name: ceres-dev
 
 services:
   tiler:
