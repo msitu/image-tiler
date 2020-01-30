@@ -1,11 +1,10 @@
-import express from 'express'
-import mapnik from 'mapnik'
+import express from 'express';
 
-import { createMap, vectorResponse, respond } from '../middlewares/map'
-import { validateTile, validateImagery } from '../middlewares/validators'
-import { fieldLayer } from '../middlewares/field'
+import { createMap, vectorResponse, respond } from '../middlewares/map';
+import { validateTile, validateImagery } from '../middlewares/validators';
+import { fieldLayer } from '../middlewares/field';
 
-const router = express.Router()
+const router = express.Router();
 
 router
   .get('/:imagery/:z/:x/:y.mvt',
@@ -15,6 +14,6 @@ router
     fieldLayer,
     vectorResponse,
     respond
-  )
+  );
 
-export default router
+export default router;

@@ -1,11 +1,11 @@
-import mapnik from 'mapnik'
-import fs from 'fs'
+import mapnik from 'mapnik';
+import fs from 'fs';
 
 // Load Mapnik datasource
-mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/gdal.input`)
+mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/gdal.input`);
 
 // Read stylesheet files
-const satelliteStyle = fs.readFileSync('styles/satellite.xml', 'utf8')
+const satelliteStyle = fs.readFileSync('styles/satellite.xml', 'utf8');
 
 const config = {
   wms: `<GDAL_WMS>
@@ -67,32 +67,32 @@ const config = {
             <Path>${process.env.CACHE_PATH}</Path>
           </Cache>
         </GDAL_WMTS>`
-}
+};
 
 // Write config file
-const filePath = `${process.env.CACHE_PATH}/satellite.xml`
-fs.writeFileSync(filePath, config.wmts)
+const filePath = `${process.env.CACHE_PATH}/satellite.xml`;
+fs.writeFileSync(filePath, config.wmts);
 
 export const satelliteLayer = (req, res, next) => {
-  const { buffer = 0.25 } = req.query
-  const { map } = res.locals
+  const { buffer = 0.25 } = req.query;
+  const { map } = res.locals;
 
-  map.fromStringSync(satelliteStyle)
+  map.fromStringSync(satelliteStyle);
 
-  map.bufferSize = map.width * buffer
+  map.bufferSize = map.width * buffer;
 
   // Create satellite layer
-  const satelliteLayer = new mapnik.Layer('satellite', '+init=epsg:3857')
+  const satelliteLayer = new mapnik.Layer('satellite', '+init=epsg:3857');
   satelliteLayer.datasource = new mapnik.Datasource({
     type: 'gdal',
     file: filePath
-  })
-  satelliteLayer.styles = ['satellite']
+  });
+  satelliteLayer.styles = ['satellite'];
 
-  map.add_layer(satelliteLayer)
+  map.add_layer(satelliteLayer);
 
   // Zoom to current extent + buffer
-  map.zoomToBox(map.bufferedExtent)
+  map.zoomToBox(map.bufferedExtent);
 
-  next()
-}
+  next();
+};

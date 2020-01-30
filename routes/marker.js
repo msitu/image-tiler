@@ -1,11 +1,11 @@
-import express from 'express'
+import express from 'express';
 
-import { createMap, vectorResponse, rasterResponse, respond } from '../middlewares/map'
-import { validateTile, validateImagery, validateFlight } from '../middlewares/validators'
-import { zoomBox } from '../middlewares/tools'
-import { markerLayer } from '../middlewares/marker'
+import { createMap, vectorResponse, rasterResponse, respond } from '../middlewares/map';
+import { validateTile, validateImagery, validateFlight } from '../middlewares/validators';
+import { zoomBox } from '../middlewares/tools';
+import { markerLayer } from '../middlewares/marker';
 
-const router = express.Router()
+const router = express.Router();
 
 router
   .get('/:imagery/:flight/:z/:x/:y.mvt',
@@ -26,6 +26,6 @@ router
     zoomBox,
     rasterResponse,
     respond
-  )
+  );
 
-export default router
+export default router;

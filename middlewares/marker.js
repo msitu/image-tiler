@@ -1,14 +1,14 @@
-import mapnik from 'mapnik'
-import fs from 'fs'
+import mapnik from 'mapnik';
+import fs from 'fs';
 
 // Load fonts (This layer has labels)
-mapnik.register_default_fonts()
+mapnik.register_default_fonts();
 
 // Read stylesheet file
-const style = fs.readFileSync('styles/marker.xml', 'utf8')
+const style = fs.readFileSync('styles/marker.xml', 'utf8');
 
 // Load Mapnik datasource
-mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`)
+mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`);
 
 const buildQuery = (flight, user, imagery) => {
   return `(
@@ -48,8 +48,8 @@ const buildQuery = (flight, user, imagery) => {
       )
       ${user ? `AND (dwf.is_private = false OR dwf.user_profile_id = '${user}')` : ''}
     ORDER BY dwf.date_created
-  ) AS markers`
-}
+  ) AS markers`;
+};
 
 const buildDataSource = (flight, user, imagery) => {
   return new mapnik.Datasource({
@@ -59,27 +59,27 @@ const buildDataSource = (flight, user, imagery) => {
     user: process.env.CORE_DB_USER,
     password: process.env.CORE_DB_PASS,
     dbname: process.env.CORE_DB_NAME,
-    table:  buildQuery(flight, user, imagery),
+    table: buildQuery(flight, user, imagery),
     extent_from_subquery: true,
     geometry_field: 'geom',
     srid: 4326,
     max_size: 10,
     connect_timeout: 30
-  })
-}
+  });
+};
 
 export const markerLayer = (req, res, next) => {
-  const { flight, imagery } = req.params
-  const { user } = req.query
-  const { map } = res.locals
+  const { flight, imagery } = req.params;
+  const { user } = req.query;
+  const { map } = res.locals;
 
-  map.fromStringSync(style)
-  const layer = new mapnik.Layer('markers')
+  map.fromStringSync(style);
+  const layer = new mapnik.Layer('markers');
 
-  layer.datasource = buildDataSource(flight, user, imagery)
-  layer.styles = ['marker-icon']
+  layer.datasource = buildDataSource(flight, user, imagery);
+  layer.styles = ['marker-icon'];
 
-  map.add_layer(layer)
+  map.add_layer(layer);
 
-  next()
-}
+  next();
+};

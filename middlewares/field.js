@@ -1,7 +1,7 @@
-import mapnik from 'mapnik'
+import mapnik from 'mapnik';
 
 // Load Mapnik datasource
-mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`)
+mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`);
 
 const buildQuery = (imagery) => {
   return `(
@@ -13,8 +13,8 @@ const buildQuery = (imagery) => {
       ON piu.source_field_id = cg.farm_id
     WHERE piu.id = '${imagery}'
     GROUP BY piu.id
-  ) AS fields`
-}
+  ) AS fields`;
+};
 
 const buildDataSource = (imagery) => {
   return new mapnik.Datasource({
@@ -30,18 +30,18 @@ const buildDataSource = (imagery) => {
     srid: 4326,
     max_size: 10,
     connect_timeout: 30
-  })
-}
+  });
+};
 
 export const fieldLayer = (req, res, next) => {
-  const { map } = res.locals
-  const { imagery } = req.params
+  const { map } = res.locals;
+  const { imagery } = req.params;
 
-  const layer = new mapnik.Layer('fields')
+  const layer = new mapnik.Layer('fields');
 
-  layer.datasource = buildDataSource(imagery)
+  layer.datasource = buildDataSource(imagery);
 
-  map.add_layer(layer)
+  map.add_layer(layer);
 
-  next()
-}
+  next();
+};

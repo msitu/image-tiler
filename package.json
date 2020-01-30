@@ -8,7 +8,8 @@
     "start": "node --expose-gc --experimental-modules --es-module-specifier-resolution=node server.js",
     "test": "NODE_ENV=test node --expose-gc ./node_modules/.bin/jest",
     "test:watch": "npm run test --watch",
-    "test:coverage": "npm run test --collect-coverage"
+    "test:coverage": "npm run test --collect-coverage",
+    "lint": "eslint --fix ."
   },
   "nodemonConfig": {
     "ignore": [

@@ -1,11 +1,11 @@
-import express from 'express'
+import express from 'express';
 
-import { zoomBox } from '../middlewares/tools'
-import { createMap, rasterResponse, vectorResponse, respond } from '../middlewares/map'
-import { validateTile } from '../middlewares/validators'
-import { gssurgoLayer } from '../middlewares/gssurgo'
+import { zoomBox } from '../middlewares/tools';
+import { createMap, rasterResponse, vectorResponse, respond } from '../middlewares/map';
+import { validateTile } from '../middlewares/validators';
+import { gssurgoLayer } from '../middlewares/gssurgo';
 
-const router = express.Router()
+const router = express.Router();
 
 router
   .get('/:z/:x/:y.png',
@@ -22,6 +22,6 @@ router
     gssurgoLayer,
     vectorResponse,
     respond
-  )
+  );
 
-export default router
+export default router;
