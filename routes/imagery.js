@@ -11,6 +11,7 @@ router
   .get('/:imagery/:z/:x/:y.png',
     validateTile,
     validateImagery,
+    validateSize,
     downloadTiff,
     createMap,
     imageryLayer,

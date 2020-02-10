@@ -12,6 +12,7 @@ const router = express.Router();
 router
   .get('/:imagery/:z/:x/:y.png',
     validateTile,
+    validateSize,
     validateImagery,
     downloadTiff,
     createMap,

@@ -2,7 +2,7 @@ import express from 'express';
 
 import { zoomBox } from '../middlewares/tools';
 import { createMap, rasterResponse, vectorResponse, respond } from '../middlewares/map';
-import { validateTile } from '../middlewares/validators';
+import { validateTile, validateSize } from '../middlewares/validators';
 import { gssurgoLayer } from '../middlewares/gssurgo';
 
 const router = express.Router();
@@ -10,6 +10,7 @@ const router = express.Router();
 router
   .get('/:z/:x/:y.png',
     validateTile,
+    validateSize,
     createMap,
     gssurgoLayer,
     zoomBox,
@@ -18,6 +19,7 @@ router
   )
   .get('/:z/:x/:y.mvt',
     validateTile,
+    validateSize,
     createMap,
     gssurgoLayer,
     vectorResponse,
