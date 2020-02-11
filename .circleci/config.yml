@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:12
+      - image: 292290781350.dkr.ecr.us-west-2.amazonaws.com/tile-server:testing
 
     working_directory: ~/repo
 
