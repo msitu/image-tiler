@@ -118,3 +118,10 @@ export const downloadTiff = (req, res, next) => {
   fs.mkdirSync(dir, { recursive: true });
   download();
 };
+
+export const setDefaultSize = (size) => {
+  return (req, res, next) => {
+    req.query.size = req.query.size || `${size}`;
+    next();
+  };
+};

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { zoomBox, downloadTiff } from '../middlewares/tools';
+import { zoomBox, downloadTiff, setDefaultSize } from '../middlewares/tools';
 import { createMap, rasterResponse, respond } from '../middlewares/map';
 import { validateTile, validateImagery, validateSize, validateBuffer, validateFlight } from '../middlewares/validators';
 import { satelliteLayer } from '../middlewares/satellite';
@@ -23,6 +23,7 @@ router
     respond
   )
   .get('/:imagery.png',
+    setDefaultSize(1024),
     validateImagery,
     validateSize,
     validateBuffer,
@@ -34,6 +35,7 @@ router
     respond
   )
   .get('/:imagery/:flight.png',
+    setDefaultSize(1024),
     validateImagery,
     validateFlight,
     validateSize,

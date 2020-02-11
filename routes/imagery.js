@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { zoomBox, autocropImage, downloadTiff } from '../middlewares/tools';
+import { zoomBox, autocropImage, downloadTiff, setDefaultSize } from '../middlewares/tools';
 import { createMap, rasterResponse, respond } from '../middlewares/map';
 import { validateTile, validateImagery, validateSize } from '../middlewares/validators';
 import { imageryLayer } from '../middlewares/imagery';
@@ -20,6 +20,7 @@ router
     respond
   )
   .get('/:imagery.png',
+    setDefaultSize(1024),
     validateImagery,
     validateSize,
     downloadTiff,

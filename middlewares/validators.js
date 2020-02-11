@@ -36,7 +36,7 @@ export const validateFlight = (req, res, next) => {
 // Validate Size query
 export const validateSize = (req, res, next) => {
   if (!req.query.size || validator.isInt(req.query.size)) {
-    req.query.size = parseInt(req.query.size || 1024);
+    req.query.size = parseInt(req.query.size || 256);
     return next();
   }
 
