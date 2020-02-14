@@ -1,7 +1,7 @@
 <Map>
   <Style filter-mode="first" name="satellite">
     <Rule>
-      <RasterSymbolizer comp-op="hard-light" opacity="1" />
+      <RasterSymbolizer comp-op="dst-over" opacity="1" />
     </Rule>
   </Style>
 </Map>

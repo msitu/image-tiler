@@ -1,7 +1,7 @@
 <Map>
   <Style filter-mode="first" name="imagery">
     <Rule>
-      <RasterSymbolizer comp-op="hard-light" opacity="1" scaling="bilinear" />
+      <RasterSymbolizer comp-op="dst-over" opacity="1" scaling="bilinear" />
     </Rule>
   </Style>
 </Map>
