@@ -27,6 +27,7 @@
     "jimp": "^0.8.5",
     "mapnik": "file:/src/node-mapnik",
     "morgan": "^1.9.1",
+    "unzipper": "^0.10.10",
     "validator": "^12.0.0"
   },
   "devDependencies": {
