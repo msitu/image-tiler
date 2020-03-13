@@ -66,7 +66,7 @@ const downloadFile = (req, res, next) => {
   const url = `http://s3-${region}.amazonaws.com/${bucket}/${filename}`;
 
   const fail = () => {
-    res.status(404).send('Error downloading imagery, please check params');
+    res.status(404).send('Error downloading source data file, please check params');
     fs.unlinkSync(tmpPath);
   };
 
@@ -132,8 +132,8 @@ const downloadFile = (req, res, next) => {
 // Download GeoTiff
 export const downloadTiff = (req, res, next) => {
   res.locals.filename = `${req.params.imagery}.tif`;
-  res.locals.bucket = req.query.bucket || 'ceres-geotiff-data';
-  res.locals.region = req.query.region || 'us-west-2';
+  res.locals.bucket = req.query.bucket || process.env.IMAGERY_BUCKET;
+  res.locals.region = req.query.region || process.env.IMAGERY_REGION;
 
   downloadFile(req, res, next);
 };
@@ -141,8 +141,8 @@ export const downloadTiff = (req, res, next) => {
 // Download Shapefile
 export const downloadShape = (req, res, next) => {
   res.locals.filename = `${req.params.custom}`;
-  res.locals.bucket = req.query.bucket || 'ceres-custom-layers-tmp';
-  res.locals.region = req.query.region || 'us-west-2';
+  res.locals.bucket = req.query.bucket || process.env.CUSTOM_LAYERS_BUCKET;
+  res.locals.region = req.query.region || process.env.CUSTOM_LAYERS_REGION;
   res.locals.zipped = true;
 
   downloadFile(req, res, next);
