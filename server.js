@@ -7,6 +7,7 @@ import gssurgo from './routes/gssurgo';
 import combo from './routes/combo';
 import field from './routes/field';
 import marker from './routes/marker';
+import custom from './routes/custom';
 
 // Create Express App
 const app = express();
@@ -25,6 +26,7 @@ app.use('/soil', gssurgo);
 app.use('/combo', combo);
 app.use('/field', field);
 app.use('/marker', marker);
+app.use('/custom', custom);
 
 // Redirect root to status
 app.get('/', (req, res) => {
