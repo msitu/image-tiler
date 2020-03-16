@@ -1,4 +1,4 @@
-FROM node-mapnik-gdal:latest
+FROM maurimiranda/node-mapnik-gdal:latest
 
 # Install Node packages
 WORKDIR /srv/tiler
