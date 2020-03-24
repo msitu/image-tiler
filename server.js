@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import imagery from './routes/imagery';
 import gssurgo from './routes/gssurgo';
 import combo from './routes/combo';
-import field from './routes/field';
+import fieldgeo from './routes/fieldgeo';
 import marker from './routes/marker';
 import custom from './routes/custom';
 
@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/imagery', imagery);
 app.use('/soil', gssurgo);
 app.use('/combo', combo);
-app.use('/field', field);
+app.use('/fieldgeo', fieldgeo);
 app.use('/marker', marker);
 app.use('/custom', custom);
 
