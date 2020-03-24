@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { downloadShape } from '../middlewares/tools';
-import { createMap, vectorResponse, respond } from '../middlewares/map';
+import { createMap, vectorResponse, respond } from '../middlewares/mapnik';
 import { validateTile, validateSize, validateCustom } from '../middlewares/validators';
 import { customLayer } from '../middlewares/custom';
 

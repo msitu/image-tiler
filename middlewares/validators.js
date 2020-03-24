@@ -33,6 +33,24 @@ export const validateFlight = (req, res, next) => {
   return res.status(422).send(`Bad format: Flight imagery = ${req.params.flight}`);
 };
 
+// Validate Field parameter
+export const validateField = (req, res, next) => {
+  if (validator.isUUID(req.params.field)) {
+    return next();
+  }
+
+  return res.status(422).send(`Bad format: Field ID = ${req.params.field}`);
+};
+
+// Validate Farm parameter
+export const validateFarm = (req, res, next) => {
+  if (validator.isUUID(req.params.farm)) {
+    return next();
+  }
+
+  return res.status(422).send(`Bad format: Farm ID = ${req.params.farm}`);
+};
+
 // Validate Custom Layer parameter
 export const validateCustom = (req, res, next) => {
   if (validator.isUUID(req.params.custom)) {
