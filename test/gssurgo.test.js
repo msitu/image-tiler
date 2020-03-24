@@ -10,7 +10,7 @@ const base = 'soil';
 
 describe('soil routes', () => {
   test('should return a raster tile', async done => {
-    const res = await request.get(`/${base}/14/3364/6683.png`);
+    const res = await request.get(`/${base}/17/22151/51660.png`);
 
     expect(res.body.equals(fixture('test/fixtures/soil-raster-tile.png'))).toBeTruthy();
 
