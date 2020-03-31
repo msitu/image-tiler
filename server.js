@@ -13,7 +13,7 @@ import custom from './routes/custom';
 const app = express();
 
 // Add CORS
-app.use(cors());
+app.use(cors({ origin: true }));
 
 // Add logger
 if (process.env.NODE_ENV !== 'test') {
