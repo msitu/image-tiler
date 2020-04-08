@@ -11,9 +11,9 @@ const buildQuery = (farm, field) => {
       cg.auto_acres AS acres,
       cg.geometry AS polygon,
       ST_PointOnSurface(cg.geometry) AS point,
-      df.id AS field_uuid,
+      df.id::text AS field_uuid,
       df.name AS field_name,
-      cof.id AS farm_uuid,
+      cof.id::text AS farm_uuid,
       cof.name AS farm_name
     FROM customers_geo cg
     JOIN published_imagery_displayfield df
@@ -29,7 +29,7 @@ const buildQuery = (farm, field) => {
   ) AS fields`;
 };
 
-const buildDataSource = (farm, field, geom, bbox) => {
+const buildDataSource = (farm, field, geom) => {
   return new mapnik.Datasource({
     type: 'postgis',
     host: process.env.CORE_DB_HOST,
