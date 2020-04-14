@@ -1,15 +1,15 @@
 {
   "name": "image-tiler",
-  "version": "3.8.5",
+  "version": "3.9.6",
   "description": "Ceres Imaging Tile Server",
   "type": "module",
   "scripts": {
-    "dev": "nodemon -e js,xml,json --inspect=0.0.0.0:9229 --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
+    "dev": "npx nodemon -e js,xml,json --inspect=0.0.0.0:9229 --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
     "start": "node --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
     "test": "NODE_ENV=test node --expose-gc ./node_modules/.bin/jest",
     "test:watch": "npm run test --watch",
     "test:coverage": "npm run test --collect-coverage",
-    "lint": "eslint ."
+    "lint": "eslint . --fix"
   },
   "nodemonConfig": {
     "ignore": [

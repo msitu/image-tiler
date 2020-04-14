@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { zoomBox, autocropImage, downloadTiff, setDefaultSize } from '../middlewares/tools';
-import { createMap, rasterResponse, respond } from '../middlewares/map';
+import { createMap, rasterResponse, respond } from '../middlewares/mapnik';
 import { validateTile, validateImagery, validateSize } from '../middlewares/validators';
 import { imageryLayer } from '../middlewares/imagery';
 
