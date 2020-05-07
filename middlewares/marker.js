@@ -23,6 +23,7 @@ const buildQuery = (flight, user, imagery) => {
     JOIN published_imagery_flight pif
       ON pif.id = dwf.flight_id
     WHERE dwf.type = 'Point'
+      AND dwf.deleted = false
       AND (
         dwf.flight_id = '${flight}'
         OR (
