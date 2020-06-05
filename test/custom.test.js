@@ -7,7 +7,7 @@ jest.setTimeout(60000);
 const request = supertest(app);
 const fixture = fs.readFileSync;
 const base = 'custom';
-const custom = '1451b496-f7be-4799-8c28-fcb0f8f39d5f';
+const custom = '0e220754-e251-41c2-ab8b-0f05962ab7e9';
 
 describe('custom routes', () => {
   test('should return a vector tile', async done => {

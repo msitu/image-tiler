@@ -20,6 +20,14 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'));
 }
 
+// Debugging for tests
+if (process.env.NODE_ENV === 'test') {
+  app.use((req, res, next) => {
+    console.debug(req.url);
+    next();
+  });
+}
+
 // Add layer controllers
 app.use('/imagery', imagery);
 app.use('/soil', gssurgo);
@@ -41,6 +49,7 @@ app.get('/status', (req, res) => {
 // Default handler
 app.use((error, req, res, next) => {
   if (error) {
+    console.debug(req.baseUrl);
     console.error(error);
     res.sendStatus(500);
   } else {
