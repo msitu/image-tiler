@@ -8,6 +8,7 @@ import combo from './routes/combo';
 import fieldgeo from './routes/fieldgeo';
 import marker from './routes/marker';
 import custom from './routes/custom';
+import tree from './routes/tree';
 
 // Create Express App
 const app = express();
@@ -35,6 +36,7 @@ app.use('/combo', combo);
 app.use('/fieldgeo', fieldgeo);
 app.use('/marker', marker);
 app.use('/custom', custom);
+app.use('/tree', tree);
 
 // Redirect root to status
 app.get('/', (req, res) => {
