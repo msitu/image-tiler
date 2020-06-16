@@ -9,7 +9,7 @@ const buildQuery = (field) => {
       s.id::text spot_id,
       t.id::text tree_id,
       df.id::text AS field_id,
-      s.geometry,
+      s.geometry AS geom,
       t.plant_date,
       v.id::text varietal_id,
       v.name varietal
