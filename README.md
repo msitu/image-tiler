@@ -6,7 +6,7 @@
 
 1. Configure variables: `cp .env.example .env`
 
-2. Run Osiris (Tiler uses its DB)
+2. Start Works (or Osiris) PostgreSQL container (Tiler uses that DB)
 
 3. Setup and run container: `docker-compose up`
 
