@@ -57,9 +57,9 @@ export const vectorResponse = (req, res, next) => {
 
 // Create Mapnik Map
 export const createMap = (req, res, next) => {
-  const { size = 256 } = req.query;
+  const { size, ratio } = req.query;
 
-  const map = new mapnik.Map(size, size, '+init=epsg:3857');
+  const map = new mapnik.Map(size, size * ratio, '+init=epsg:3857');
 
   res.locals.map = map;
 

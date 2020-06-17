@@ -53,5 +53,27 @@ describe('combo routes', () => {
     done();
   });
 
+  test('should return a single image with markers for notifications', async done => {
+    const imagery = '4a6fa821-f022-4864-8e55-b8c9231693d4';
+    const flight = '5e771760-a22f-4a98-aa38-f63e0de40827';
+
+    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png`);
+
+    expect(res.body.equals(fixture('test/fixtures/combo-issues.png'))).toBeTruthy();
+
+    done();
+  });
+
+  test('should return a single image with markers for notifications with specific aspect ratio', async done => {
+    const imagery = '4a6fa821-f022-4864-8e55-b8c9231693d4';
+    const flight = '5e771760-a22f-4a98-aa38-f63e0de40827';
+
+    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png?ratio=2`);
+
+    expect(res.body.equals(fixture('test/fixtures/combo-issues-ratio.png'))).toBeTruthy();
+
+    done();
+  });
+
   afterAll(app.close);
 });

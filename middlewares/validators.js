@@ -60,14 +60,20 @@ export const validateCustom = (req, res, next) => {
   return res.status(422).send(`Bad format: Custom Layer ID = ${req.params.custom}`);
 };
 
-// Validate Size query
+// Validate Size and Ratio query
 export const validateSize = (req, res, next) => {
   if (!req.query.size || validator.isInt(req.query.size)) {
     req.query.size = parseInt(req.query.size || 256);
+  } else {
+    return res.status(422).send(`Bad format: Size = ${req.query.size}`);
+  }
+
+  if (!req.query.ratio || validator.isFloat(req.query.ratio)) {
+    req.query.ratio = parseFloat(req.query.ratio || 1);
     return next();
   }
 
-  return res.status(422).send(`Bad format: Size = ${req.query.size}`);
+  return res.status(422).send(`Bad format: Ratio = ${req.query.ratio}`);
 };
 
 // Validate Buffer query

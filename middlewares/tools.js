@@ -148,9 +148,34 @@ export const downloadShape = (req, res, next) => {
   downloadFile(req, res, next);
 };
 
+// Set image size
 export const setDefaultSize = (size) => {
   return (req, res, next) => {
     req.query.size = req.query.size || `${size}`;
+    next();
+  };
+};
+
+// Set image aspect ratio
+export const setDefaultRatio = (ratio) => {
+  return (req, res, next) => {
+    req.query.ratio = req.query.ratio || `${ratio}`;
+    next();
+  };
+};
+
+// Set buffer
+export const setDefaultBuffer = (buffer) => {
+  return (req, res, next) => {
+    req.query.buffer = req.query.buffer || `${buffer}`;
+    next();
+  };
+};
+
+// Set user
+export const setDefaultUser = (user) => {
+  return (req, res, next) => {
+    req.query.user = req.query.user || `${user}`;
     next();
   };
 };

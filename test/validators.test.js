@@ -30,6 +30,17 @@ describe('validators', () => {
     done();
   });
 
+  test('should return an error if ratio format is wrong', async done => {
+    const imagery = 'c1923c08-5c61-420e-b569-5e00baf0c114';
+    const flight = 'ebe0d55b-e957-44ab-8240-7202150a3789';
+
+    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png?ratio=AAA`);
+
+    expect(res.status).toBe(422);
+
+    done();
+  });
+
   test('should return an error if XYZ format is wrong', async done => {
     let res = await request.get(`/${base}/${imagery}/AA/21455/50471.png`);
 
