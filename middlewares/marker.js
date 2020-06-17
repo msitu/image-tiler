@@ -11,6 +11,17 @@ const style = fs.readFileSync('styles/marker.xml', 'utf8');
 mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`);
 
 const buildQuery = (flight, user, imagery) => {
+  let userFilter = '';
+
+  if (user) {
+    userFilter = `
+      AND dwf.is_staff = false
+      AND (
+        dwf.is_private = false OR dwf.user_profile_id = '${user}'
+      )
+    `;
+  }
+
   return `(
     SELECT dwf.id AS id,
       ptf.feature AS geom,
@@ -47,7 +58,7 @@ const buildQuery = (flight, user, imagery) => {
           )
         )
       )
-      ${user ? `AND (dwf.is_private = false OR dwf.user_profile_id = '${user}')` : ''}
+      ${userFilter}
     ORDER BY dwf.date_created
   ) AS markers`;
 };
