@@ -74,12 +74,9 @@ const filePath = `${process.env.CACHE_PATH}/satellite.xml`;
 fs.writeFileSync(filePath, config.wmts);
 
 export const satelliteLayer = (req, res, next) => {
-  const { buffer = 0.25 } = req.query;
   const { map } = res.locals;
 
   map.fromStringSync(satelliteStyle);
-
-  map.bufferSize = map.width * buffer;
 
   // Create satellite layer
   const satelliteLayer = new mapnik.Layer('satellite', '+init=epsg:3857');
@@ -90,9 +87,6 @@ export const satelliteLayer = (req, res, next) => {
   satelliteLayer.styles = ['satellite'];
 
   map.add_layer(satelliteLayer);
-
-  // Zoom to current extent + buffer
-  map.zoomToBox(map.bufferedExtent);
 
   next();
 };

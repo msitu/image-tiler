@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { zoomBox, downloadTiff, setDefaultSize, setDefaultRatio, setDefaultBuffer, setDefaultUser } from '../middlewares/tools';
-import { createMap, rasterResponse, respond } from '../middlewares/mapnik';
+import { createMap, rasterResponse, respond, setExtent } from '../middlewares/mapnik';
 import { validateTile, validateImagery, validateSize, validateBuffer, validateFlight } from '../middlewares/validators';
 import { satelliteLayer } from '../middlewares/satellite';
 import { imageryLayer } from '../middlewares/imagery';
@@ -24,18 +24,21 @@ router
   )
   .get('/:imagery.png',
     setDefaultSize(1024),
+    setDefaultBuffer(100),
     validateImagery,
     validateSize,
     validateBuffer,
     downloadTiff,
     createMap,
     imageryLayer,
+    setExtent,
     satelliteLayer,
     rasterResponse,
     respond
   )
   .get('/:imagery/:flight.png',
     setDefaultSize(1024),
+    setDefaultBuffer(100),
     validateImagery,
     validateFlight,
     validateSize,
@@ -43,6 +46,7 @@ router
     downloadTiff,
     createMap,
     imageryLayer,
+    setExtent,
     satelliteLayer,
     markerLayer,
     rasterResponse,
@@ -51,7 +55,7 @@ router
   .get('/issues/:imagery/:flight.png',
     setDefaultSize(256),
     setDefaultRatio(0.5),
-    setDefaultBuffer(0.1),
+    setDefaultBuffer(50),
     setDefaultUser(process.env.SUPPORT_USER),
     validateImagery,
     validateFlight,
@@ -59,9 +63,10 @@ router
     validateBuffer,
     downloadTiff,
     createMap,
+    markerLayer,
+    setExtent,
     imageryLayer,
     satelliteLayer,
-    markerLayer,
     rasterResponse,
     respond
   );

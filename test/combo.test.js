@@ -35,7 +35,7 @@ describe('combo routes', () => {
   });
 
   test('should return a single image with specific buffer', async done => {
-    const res = await request.get(`/${base}/${imagery}.png?buffer=0.1`);
+    const res = await request.get(`/${base}/${imagery}.png?buffer=500`);
 
     expect(res.body.equals(fixture('test/fixtures/combo-image-buffer.png'))).toBeTruthy();
 

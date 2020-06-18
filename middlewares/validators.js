@@ -78,8 +78,8 @@ export const validateSize = (req, res, next) => {
 
 // Validate Buffer query
 export const validateBuffer = (req, res, next) => {
-  if (!req.query.buffer || validator.isFloat(req.query.buffer, { min: 0, max: 1 })) {
-    req.query.buffer = parseFloat(req.query.buffer || 0.25);
+  if (!req.query.buffer || validator.isInt(req.query.buffer)) {
+    req.query.buffer = parseFloat(req.query.buffer || 0);
     return next();
   }
 
