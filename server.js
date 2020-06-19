@@ -8,6 +8,7 @@ import combo from './routes/combo';
 import fieldgeo from './routes/fieldgeo';
 import marker from './routes/marker';
 import custom from './routes/custom';
+import tree from './routes/tree';
 
 // Create Express App
 const app = express();
@@ -17,7 +18,11 @@ app.use(cors({ origin: true }));
 
 // Add logger
 if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan(':date[iso] :remote-addr :url :status :response-time ms'));
+  morgan.token('error', function error (req) {
+    return req.error;
+  });
+
+  app.use(morgan(':date[iso] :remote-addr :url :status :response-time :error'));
 }
 
 // Debugging for tests
@@ -35,6 +40,7 @@ app.use('/combo', combo);
 app.use('/fieldgeo', fieldgeo);
 app.use('/marker', marker);
 app.use('/custom', custom);
+app.use('/tree', tree);
 
 // Redirect root to status
 app.get('/', (req, res) => {
@@ -49,9 +55,10 @@ app.get('/status', (req, res) => {
 // Default handler
 app.use((error, req, res, next) => {
   if (error) {
-    console.debug(req.baseUrl);
     console.error(error);
-    res.sendStatus(500);
+    req.error = error;
+    res.status(error.code || 500);
+    res.send(error.message);
   } else {
     res.sendStatus(404);
   }
