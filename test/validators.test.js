@@ -18,6 +18,18 @@ describe('validators', () => {
     done();
   });
 
+  test('should return an error if minimum buffer format is wrong', async done => {
+    let res = await request.get(`/${base}/${imagery}.png?minBuffer=AAA`);
+
+    expect(res.status).toBe(422);
+
+    res = await request.get(`/${base}/${imagery}.png?minBuffer=1.5`);
+
+    expect(res.status).toBe(422);
+
+    done();
+  });
+
   test('should return an error if size format is wrong', async done => {
     let res = await request.get(`/${base}/${imagery}.png?size=AAA`);
 

@@ -24,7 +24,7 @@ router
   )
   .get('/:imagery.png',
     setDefaultSize(1024),
-    setDefaultBuffer(100),
+    setDefaultBuffer(0.1, 100),
     validateImagery,
     validateSize,
     validateBuffer,
@@ -38,7 +38,7 @@ router
   )
   .get('/:imagery/:flight.png',
     setDefaultSize(1024),
-    setDefaultBuffer(100),
+    setDefaultBuffer(0.1, 100),
     validateImagery,
     validateFlight,
     validateSize,
@@ -55,7 +55,7 @@ router
   .get('/issues/:imagery/:flight.png',
     setDefaultSize(256),
     setDefaultRatio(0.5),
-    setDefaultBuffer(50),
+    setDefaultBuffer(0, 50),
     setDefaultUser(process.env.SUPPORT_USER),
     validateImagery,
     validateFlight,

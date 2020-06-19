@@ -76,12 +76,18 @@ export const validateSize = (req, res, next) => {
   return res.status(422).send(`Bad format: Ratio = ${req.query.ratio}`);
 };
 
-// Validate Buffer query
+// Validate Buffer and MinBuffer query
 export const validateBuffer = (req, res, next) => {
-  if (!req.query.buffer || validator.isInt(req.query.buffer)) {
+  if (!req.query.buffer || validator.isFloat(req.query.buffer, { min: 0, max: 1 })) {
     req.query.buffer = parseFloat(req.query.buffer || 0);
+  } else {
+    return res.status(422).send(`Bad format: Buffer = ${req.query.buffer}`);
+  }
+
+  if (!req.query.minBuffer || validator.isInt(req.query.minBuffer)) {
+    req.query.minBuffer = parseFloat(req.query.minBuffer || 0);
     return next();
   }
 
-  return res.status(422).send(`Bad format: Buffer = ${req.query.buffer}`);
+  return res.status(422).send(`Bad format: Minimum Buffer = ${req.query.minBuffer}`);
 };

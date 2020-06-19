@@ -35,7 +35,7 @@ describe('combo routes', () => {
   });
 
   test('should return a single image with specific buffer', async done => {
-    const res = await request.get(`/${base}/${imagery}.png?buffer=500`);
+    const res = await request.get(`/${base}/${imagery}.png?buffer=0.5`);
 
     expect(res.body.equals(fixture('test/fixtures/combo-image-buffer.png'))).toBeTruthy();
 
@@ -57,7 +57,7 @@ describe('combo routes', () => {
     const imagery = '4a6fa821-f022-4864-8e55-b8c9231693d4';
     const flight = '5e771760-a22f-4a98-aa38-f63e0de40827';
 
-    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png`);
+    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png?minBuffer=50`);
 
     expect(res.body.equals(fixture('test/fixtures/combo-issues.png'))).toBeTruthy();
 
@@ -68,7 +68,7 @@ describe('combo routes', () => {
     const imagery = '4a6fa821-f022-4864-8e55-b8c9231693d4';
     const flight = '5e771760-a22f-4a98-aa38-f63e0de40827';
 
-    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png?ratio=2`);
+    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png??minBuffer=50&ratio=2`);
 
     expect(res.body.equals(fixture('test/fixtures/combo-issues-ratio.png'))).toBeTruthy();
 
