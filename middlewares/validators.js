@@ -1,5 +1,14 @@
 import validator from 'validator';
 
+class ValidationError extends Error {
+  constructor (message, type) {
+    super(`Bad param format: ${message}. ${type} expected.`);
+
+    this.name = 'ValidationError';
+    this.code = 400;
+  }
+}
+
 // Validate tile parameters
 export const validateTile = (req, res, next) => {
   if (validator.isInt(req.params.x) &&
@@ -12,7 +21,7 @@ export const validateTile = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: XYZ = ${req.params.x}, ${req.params.y}, ${req.params.z}`);
+  throw new ValidationError(`ZXY = ${req.params.z}/${req.params.x}/${req.params.y}`, 'Int/Int/Int');
 };
 
 // Validate Imagery imagery parameter
@@ -21,7 +30,7 @@ export const validateImagery = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: Imagery imagery = ${req.params.imagery}`);
+  throw new ValidationError(`Imagery ID: ${req.params.imagery}`, 'UUID');
 };
 
 // Validate Flight imagery parameter
@@ -30,7 +39,7 @@ export const validateFlight = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: Flight imagery = ${req.params.flight}`);
+  throw new ValidationError(`Flight ID: ${req.params.flight}`, 'UUID');
 };
 
 // Validate Field parameter
@@ -39,7 +48,7 @@ export const validateField = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: Field ID = ${req.params.field}`);
+  throw new ValidationError(`Field ID: ${req.params.field}`, 'UUID');
 };
 
 // Validate Farm parameter
@@ -48,7 +57,7 @@ export const validateFarm = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: Farm ID = ${req.params.farm}`);
+  throw new ValidationError(`Farm ID: ${req.params.farm}`, 'UUID');
 };
 
 // Validate Custom Layer parameter
@@ -57,7 +66,7 @@ export const validateCustom = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: Custom Layer ID = ${req.params.custom}`);
+  throw new ValidationError(`Custom Layer ID: ${req.params.custom}`, 'UUID');
 };
 
 // Validate Size and Ratio query
@@ -65,7 +74,7 @@ export const validateSize = (req, res, next) => {
   if (!req.query.size || validator.isInt(req.query.size)) {
     req.query.size = parseInt(req.query.size || 256);
   } else {
-    return res.status(422).send(`Bad format: Size = ${req.query.size}`);
+    throw new ValidationError(`Size: ${req.query.size}`, 'Int');
   }
 
   if (!req.query.ratio || validator.isFloat(req.query.ratio)) {
@@ -73,7 +82,7 @@ export const validateSize = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: Ratio = ${req.query.ratio}`);
+  throw new ValidationError(`Aspect Ratio: ${req.query.ratio}`, 'Float');
 };
 
 // Validate Buffer and MinBuffer query
@@ -81,7 +90,7 @@ export const validateBuffer = (req, res, next) => {
   if (!req.query.buffer || validator.isFloat(req.query.buffer, { min: 0, max: 1 })) {
     req.query.buffer = parseFloat(req.query.buffer || 0);
   } else {
-    return res.status(422).send(`Bad format: Buffer = ${req.query.buffer}`);
+    throw new ValidationError(`Buffer: ${req.query.buffer}`, 'Float (0-1)');
   }
 
   if (!req.query.minBuffer || validator.isInt(req.query.minBuffer)) {
@@ -89,5 +98,5 @@ export const validateBuffer = (req, res, next) => {
     return next();
   }
 
-  return res.status(422).send(`Bad format: Minimum Buffer = ${req.query.minBuffer}`);
+  throw new ValidationError(`Minimum Buffer: ${req.query.minBuffer}`, 'Int');
 };
