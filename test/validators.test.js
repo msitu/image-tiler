@@ -21,11 +21,11 @@ describe('validators', () => {
   test('should return an error if minimum buffer format is wrong', async done => {
     let res = await request.get(`/${base}/${imagery}.png?minBuffer=AAA`);
 
-    expect(res.status).toBe(422);
+    expect(res.status).toBe(400);
 
     res = await request.get(`/${base}/${imagery}.png?minBuffer=1.5`);
 
-    expect(res.status).toBe(422);
+    expect(res.status).toBe(400);
 
     done();
   });
@@ -48,7 +48,7 @@ describe('validators', () => {
 
     const res = await request.get(`/${base}/issues/${imagery}/${flight}.png?ratio=AAA`);
 
-    expect(res.status).toBe(422);
+    expect(res.status).toBe(400);
 
     done();
   });
