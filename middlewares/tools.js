@@ -1,12 +1,14 @@
-import SphericalMercator from '@mapbox/sphericalmercator';
-import Jimp from 'jimp';
 import fs from 'fs';
 import http from 'http';
+
+import SphericalMercator from '@mapbox/sphericalmercator';
+import Jimp from 'jimp';
 import unzipper from 'unzipper';
 import Redis from 'ioredis';
 import Redlock from 'redlock';
 
 const mercator = new SphericalMercator();
+
 const redis = new Redis({ host: process.env.REDIS_HOST });
 const redlock = new Redlock([redis], {
   retryCount: -1
@@ -43,99 +45,88 @@ export const zoomBox = (req, res, next) => {
 
 // Delete files with access time older than 1 hour
 const clearCache = (tmpPath) => {
-  return new Promise((resolve, reject) => {
-    const now = Date.now();
+  const now = Date.now();
 
-    fs.readdir(process.env.CACHE_PATH, (error, files) => {
-      if (error) return reject(error);
-
-      files.forEach((file) => {
-        const path = `${process.env.CACHE_PATH}/${file}`;
-        const age = now - fs.statSync(path).atimeMs;
-        if (age > 3600000) {
-          fs.unlinkSync(path);
-        }
-      });
-
-      fs.unlink(tmpPath, resolve);
-    });
+  fs.readdirSync(process.env.CACHE_PATH).forEach((file) => {
+    const path = `${process.env.CACHE_PATH}/${file}`;
+    const age = now - fs.statSync(path).atimeMs;
+    if (age > 3600000) {
+      fs.unlinkSync(path);
+    }
   });
+
+  fs.unlinkSync(tmpPath);
 };
 
 // Download file from S3 to the local cache
 const downloadFile = (req, res, next) => {
-  const { filename, bucket, region, zipped = false, style = false } = res.locals;
+  const { filename, bucket, region, zipped = false } = res.locals;
 
   const dir = `${process.env.CACHE_PATH}/${region}/${bucket}`;
   const path = `${dir}/${filename}`;
   const tmpPath = `${path}.tmp`;
   const url = `http://s3-${region}.amazonaws.com/${bucket}/${filename}`;
 
-  const fail = () => {
-    res.status(404).send('Error downloading source data file, please check params');
-    fs.unlinkSync(tmpPath);
-  };
-
-  const download = () => {
+  const download = async () => {
+    // If file already exists, set path and call next middleware
     if (fs.existsSync(path)) {
-      // If file already exists, call next middleware
-      if (style) {
-        res.locals.stylePath = path;
-      } else {
-        res.locals.path = path;
-      }
+      res.locals.path = path;
       return next();
     }
 
-    redlock.lock(filename, 1000000).then((lock) => {
-      if (fs.existsSync(path)) {
-        lock.unlock();
-        return download();
+    const lock = await redlock.lock(filename, 10000);
+
+    const fail = () => {
+      fs.unlinkSync(tmpPath);
+      lock.unlock().catch(next);
+      res.status(404).send('Error downloading source data file, please check params');
+    };
+
+    const retry = () => {
+      lock.unlock().catch((e) => {});
+      download();
+    };
+
+    if (fs.existsSync(path)) {
+      return retry();
+    }
+
+    const onError = (error) => {
+      // If file not found, trigger error!
+      if (error.code === 'ENOTFOUND') {
+        return fail();
       }
 
-      const file = fs.createWriteStream(tmpPath)
-        .on('error', (error) => {
-          lock.unlock();
-          if (error.code === 'ENOSPC') {
-            // If cache dir is full, clear it!
-            clearCache(tmpPath).then(download).catch(download);
-          } else {
-            download();
-          }
-        })
-        .on('finish', () => {
-          if (zipped) {
-            fs.createReadStream(tmpPath)
-              .pipe(unzipper.Extract({ path: `${tmpPath}.zip` }))
-              .on('close', () => {
-                fs.renameSync(`${tmpPath}.zip`, path);
-                fs.unlinkSync(tmpPath);
-                lock.unlock();
-                download();
-              });
-          } else {
-            fs.renameSync(tmpPath, path);
-            lock.unlock();
-            download();
-          }
-        });
+      // If cache dir is full, clear it and retry
+      if (error.code === 'ENOSPC') {
+        clearCache(tmpPath);
+      }
 
-      http.get(url, (response) => {
-        if (response.statusCode !== 200) {
-          lock.unlock();
-          fail();
+      retry();
+    };
+
+    const file = fs.createWriteStream(tmpPath)
+      .on('error', onError)
+      .on('finish', () => {
+        if (zipped) {
+          fs.createReadStream(tmpPath)
+            .pipe(unzipper.Extract({ path: `${tmpPath}.zip` }))
+            .on('close', () => {
+              fs.rename(`${tmpPath}.zip`, path, retry);
+              fs.unlinkSync(tmpPath);
+            });
         } else {
-          response.pipe(file);
-        }
-      }).on('error', (error) => {
-        lock.unlock();
-        if (error.code === 'ENOTFOUND') {
-          fail();
-        } else {
-          download();
+          fs.rename(tmpPath, path, retry);
         }
       });
-    });
+
+    http.get(url, (response) => {
+      if (response.statusCode !== 200) {
+        fail();
+      } else {
+        response.pipe(file);
+      }
+    }).on('error', onError);
   };
 
   // Create directory and trigger download
