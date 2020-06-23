@@ -18,8 +18,10 @@ app.use(cors({ origin: true }));
 
 // Add logger
 if (process.env.NODE_ENV !== 'test') {
-  morgan.token('error', function error (req) {
-    console.error(error);
+  morgan.token('error', (req) => {
+    if (req.error) {
+      console.error(req.error);
+    }
     return req.error;
   });
 

@@ -3,8 +3,14 @@ import Jimp from 'jimp';
 import fs from 'fs';
 import http from 'http';
 import unzipper from 'unzipper';
+import Redis from 'ioredis';
+import Redlock from 'redlock';
 
 const mercator = new SphericalMercator();
+const redis = new Redis({ host: process.env.REDIS_HOST });
+const redlock = new Redlock([redis], {
+  retryCount: -1
+});
 
 // Autocrop image
 export const autocropImage = (req, res, next) => {
@@ -78,16 +84,18 @@ const downloadFile = (req, res, next) => {
       } else {
         res.locals.path = path;
       }
-      next();
-    } else if (fs.existsSync(tmpPath)) {
-      // If file is being downloaded, wait for it
-      setTimeout(download, 50);
-    } else {
-      // Else, download file
-      fs.closeSync(fs.openSync(tmpPath, 'w'));
+      return next();
+    }
+
+    redlock.lock(filename, 1000000).then((lock) => {
+      if (fs.existsSync(path)) {
+        lock.unlock();
+        return download();
+      }
 
       const file = fs.createWriteStream(tmpPath)
         .on('error', (error) => {
+          lock.unlock();
           if (error.code === 'ENOSPC') {
             // If cache dir is full, clear it!
             clearCache(tmpPath).then(download).catch(download);
@@ -100,28 +108,34 @@ const downloadFile = (req, res, next) => {
             fs.createReadStream(tmpPath)
               .pipe(unzipper.Extract({ path: `${tmpPath}.zip` }))
               .on('close', () => {
-                fs.rename(`${tmpPath}.zip`, path, download);
+                fs.renameSync(`${tmpPath}.zip`, path);
                 fs.unlinkSync(tmpPath);
+                lock.unlock();
+                download();
               });
           } else {
-            fs.rename(tmpPath, path, download);
+            fs.renameSync(tmpPath, path);
+            lock.unlock();
+            download();
           }
         });
 
       http.get(url, (response) => {
         if (response.statusCode !== 200) {
+          lock.unlock();
           fail();
         } else {
           response.pipe(file);
         }
       }).on('error', (error) => {
+        lock.unlock();
         if (error.code === 'ENOTFOUND') {
           fail();
         } else {
           download();
         }
       });
-    }
+    });
   };
 
   // Create directory and trigger download
