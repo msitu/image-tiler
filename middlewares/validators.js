@@ -69,22 +69,34 @@ export const validateCustom = (req, res, next) => {
   throw new ValidationError(`Custom Layer ID: ${req.params.custom}`, 'UUID');
 };
 
-// Validate Size query
+// Validate Size and Ratio query
 export const validateSize = (req, res, next) => {
   if (!req.query.size || validator.isInt(req.query.size)) {
     req.query.size = parseInt(req.query.size || 256);
+  } else {
+    throw new ValidationError(`Size: ${req.query.size}`, 'Int');
+  }
+
+  if (!req.query.ratio || validator.isFloat(req.query.ratio)) {
+    req.query.ratio = parseFloat(req.query.ratio || 1);
     return next();
   }
 
-  throw new ValidationError(`Size: ${req.query.size}`, 'Int');
+  throw new ValidationError(`Aspect Ratio: ${req.query.ratio}`, 'Float');
 };
 
-// Validate Buffer query
+// Validate Buffer and MinBuffer query
 export const validateBuffer = (req, res, next) => {
   if (!req.query.buffer || validator.isFloat(req.query.buffer, { min: 0, max: 1 })) {
-    req.query.buffer = parseFloat(req.query.buffer || 0.25);
+    req.query.buffer = parseFloat(req.query.buffer || 0);
+  } else {
+    throw new ValidationError(`Buffer: ${req.query.buffer}`, 'Float (0-1)');
+  }
+
+  if (!req.query.minBuffer || validator.isInt(req.query.minBuffer)) {
+    req.query.minBuffer = parseFloat(req.query.minBuffer || 0);
     return next();
   }
 
-  throw new ValidationError(`Buffer: ${req.query.buffer}`, 'Float (0-1)');
+  throw new ValidationError(`Minimum Buffer: ${req.query.minBuffer}`, 'Int');
 };

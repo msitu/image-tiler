@@ -23,8 +23,5 @@ export const imageryLayer = (req, res, next) => {
 
   map.add_layer(layer);
 
-  // Zoom to GeoTiff bounds
-  map.zoomAll();
-
   next();
 };

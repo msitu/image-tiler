@@ -57,11 +57,45 @@ export const vectorResponse = (req, res, next) => {
 
 // Create Mapnik Map
 export const createMap = (req, res, next) => {
-  const { size = 256 } = req.query;
+  const { size, ratio } = req.query;
 
-  const map = new mapnik.Map(size, size, '+init=epsg:3857');
+  const map = new mapnik.Map(size, size * ratio, '+init=epsg:3857');
 
   res.locals.map = map;
+
+  next();
+};
+
+// Define map extent based on current layers and buffer
+export const setExtent = (req, res, next) => {
+  const { buffer, minBuffer } = req.query;
+  const { map } = res.locals;
+
+  // Zoom to current layers
+  map.zoomAll();
+
+  // Add buffer
+  if (buffer !== 0) {
+    map.bufferSize = map.width * buffer;
+    map.zoomToBox(map.bufferedExtent);
+  }
+
+  // Add minBuffer if buffer is not enough
+  if (minBuffer !== 0) {
+    const extent = map.extent;
+
+    if ((extent[2] - extent[0]) < minBuffer) {
+      extent[0] -= minBuffer;
+      extent[2] += minBuffer;
+    }
+
+    if ((extent[3] - extent[1]) < minBuffer) {
+      extent[1] -= minBuffer;
+      extent[3] += minBuffer;
+    }
+
+    map.extent = extent;
+  }
 
   next();
 };

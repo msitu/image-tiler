@@ -6,20 +6,25 @@ mapnik.register_default_fonts();
 
 // Read stylesheet file
 const style = fs.readFileSync('styles/marker.xml', 'utf8');
+const issueStyle = fs.readFileSync('styles/marker-issue.xml', 'utf8');
 
 // Load Mapnik datasource
 mapnik.registerDatasource(`${mapnik.settings.paths.input_plugins}/postgis.input`);
 
-const buildQuery = (flight, user, imagery) => {
+const buildQuery = (imagery, flight, user, exclusive) => {
   let userFilter = '';
 
   if (user) {
-    userFilter = `
-      AND dwf.is_staff = false
-      AND (
-        dwf.is_private = false OR dwf.user_profile_id = '${user}'
-      )
-    `;
+    if (exclusive) {
+      userFilter = `AND dwf.user_profile_id = '${user}'`;
+    } else {
+      userFilter = `
+        AND dwf.is_staff = false
+        AND (
+          dwf.is_private = false OR dwf.user_profile_id = '${user}'
+        )
+      `;
+    }
   }
 
   return `(
@@ -63,7 +68,7 @@ const buildQuery = (flight, user, imagery) => {
   ) AS markers`;
 };
 
-const buildDataSource = (flight, user, imagery) => {
+const buildDataSource = (imagery, flight, user, exclusive) => {
   return new mapnik.Datasource({
     type: 'postgis',
     host: process.env.CORE_DB_HOST,
@@ -71,7 +76,7 @@ const buildDataSource = (flight, user, imagery) => {
     user: process.env.CORE_DB_USER,
     password: process.env.CORE_DB_PASS,
     dbname: process.env.CORE_DB_NAME,
-    table: buildQuery(flight, user, imagery),
+    table: buildQuery(imagery, flight, user, exclusive),
     extent_from_subquery: true,
     geometry_field: 'geom',
     srid: 4326,
@@ -84,11 +89,18 @@ export const markerLayer = (req, res, next) => {
   const { flight, imagery } = req.params;
   const { user } = req.query;
   const { map } = res.locals;
+  let { exclusive = false } = req.query;
 
-  map.fromStringSync(style);
+  if (user === process.env.SUPPORT_USER) {
+    map.fromStringSync(issueStyle);
+    exclusive = true;
+  } else {
+    map.fromStringSync(style);
+  }
+
   const layer = new mapnik.Layer('markers');
 
-  layer.datasource = buildDataSource(flight, user, imagery);
+  layer.datasource = buildDataSource(imagery, flight, user, exclusive);
   layer.styles = ['marker-icon'];
 
   map.add_layer(layer);

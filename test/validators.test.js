@@ -18,12 +18,35 @@ describe('validators', () => {
     done();
   });
 
+  test('should return an error if minimum buffer format is wrong', async done => {
+    let res = await request.get(`/${base}/${imagery}.png?minBuffer=AAA`);
+
+    expect(res.status).toBe(400);
+
+    res = await request.get(`/${base}/${imagery}.png?minBuffer=1.5`);
+
+    expect(res.status).toBe(400);
+
+    done();
+  });
+
   test('should return an error if size format is wrong', async done => {
     let res = await request.get(`/${base}/${imagery}.png?size=AAA`);
 
     expect(res.status).toBe(400);
 
     res = await request.get(`/${base}/${imagery}.png?size=1.5`);
+
+    expect(res.status).toBe(400);
+
+    done();
+  });
+
+  test('should return an error if ratio format is wrong', async done => {
+    const imagery = 'c1923c08-5c61-420e-b569-5e00baf0c114';
+    const flight = 'ebe0d55b-e957-44ab-8240-7202150a3789';
+
+    const res = await request.get(`/${base}/issues/${imagery}/${flight}.png?ratio=AAA`);
 
     expect(res.status).toBe(400);
 
