@@ -53,4 +53,6 @@ describe('imagery routes', () => {
 
     done();
   });
+
+  afterAll(app.close);
 });
