@@ -18,7 +18,10 @@ app.use(cors({ origin: true }));
 
 // Add logger
 if (process.env.NODE_ENV !== 'test') {
-  morgan.token('error', function error (req) {
+  morgan.token('error', (req) => {
+    if (req.error) {
+      console.error(req.error);
+    }
     return req.error;
   });
 
@@ -55,7 +58,6 @@ app.get('/status', (req, res) => {
 // Default handler
 app.use((error, req, res, next) => {
   if (error) {
-    console.error(error);
     req.error = error;
     res.status(error.code || 500);
     res.send(error.message);

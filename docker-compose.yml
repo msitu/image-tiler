@@ -20,3 +20,8 @@ services:
     working_dir: /srv/tiler
     command: npm run dev
     env_file: .env
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
