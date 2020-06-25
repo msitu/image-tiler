@@ -26,7 +26,7 @@ const config = {
             <TileCountY>1</TileCountY>
           </DataWindow>
           <Cache>
-            <Path>${process.env.CACHE_PATH}</Path>
+            <Path>${process.env.CACHE_PATH}/gdal</Path>
           </Cache>
         </GDAL_WMS>`,
   tms: `<GDAL_WMS>
@@ -47,7 +47,7 @@ const config = {
           <BlockSizeY>256</BlockSizeY>
           <Projection>EPSG:3857</Projection>
           <Cache>
-            <Path>${process.env.CACHE_PATH}</Path>
+            <Path>${process.env.CACHE_PATH}/gdal</Path>
           </Cache>
         </GDAL_WMS>`,
   wmts: `<GDAL_WMTS>
@@ -64,7 +64,7 @@ const config = {
           </DataWindow>
           <BandsCount>4</BandsCount>
           <Cache>
-            <Path>${process.env.CACHE_PATH}</Path>
+            <Path>${process.env.CACHE_PATH}/gdal</Path>
           </Cache>
         </GDAL_WMTS>`
 };

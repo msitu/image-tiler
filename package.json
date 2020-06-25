@@ -16,7 +16,7 @@
       "test"
     ]
   },
-  "author": "Ceres Avian Team",
+  "author": "Ceres Dev Team",
   "license": "ISC",
   "repository": "https://github.com/ceresimaging/image-tiler",
   "main": "server.js",
@@ -45,6 +45,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
     "nodemon": "^1.19.4",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "uuid": "^8.2.0"
   }
 }

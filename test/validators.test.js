@@ -85,5 +85,13 @@ describe('validators', () => {
     done();
   });
 
+  test('should return an error if age format is wrong', async done => {
+    const res = await request.get(`/cache?age=AAA`);
+
+    expect(res.status).toBe(400);
+
+    done();
+  });
+
   afterAll(app.close);
 });

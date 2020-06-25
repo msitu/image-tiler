@@ -7,6 +7,8 @@ import unzipper from 'unzipper';
 import Redis from 'ioredis';
 import Redlock from 'redlock';
 
+import { flush } from './cache';
+
 const mercator = new SphericalMercator();
 
 const redis = new Redis({ host: process.env.REDIS_HOST });
@@ -43,27 +45,13 @@ export const zoomBox = (req, res, next) => {
   next();
 };
 
-// Delete files with access time older than 1 hour
-const clearCache = (tmpPath) => {
-  const now = Date.now();
-
-  fs.readdirSync(process.env.CACHE_PATH).forEach((file) => {
-    const path = `${process.env.CACHE_PATH}/${file}`;
-    const age = now - fs.statSync(path).atimeMs;
-    if (age > 3600000) {
-      fs.unlinkSync(path);
-    }
-  });
-
-  fs.unlinkSync(tmpPath);
-};
-
 // Download file from S3 to the local cache
 const downloadFile = (req, res, next) => {
-  const { filename, bucket, region, zipped = false } = res.locals;
+  const { dir, filename, zipped = false } = res.locals;
+  const { bucket, region } = req.query;
 
-  const dir = `${process.env.CACHE_PATH}/${region}/${bucket}`;
-  const path = `${dir}/${filename}`;
+  const dirPath = `${process.env.CACHE_PATH}/${dir}/${region}/${bucket}`;
+  const path = `${dirPath}/${filename}`;
   const tmpPath = `${path}.tmp`;
   const url = `http://s3-${region}.amazonaws.com/${bucket}/${filename}`;
 
@@ -97,9 +85,13 @@ const downloadFile = (req, res, next) => {
         return fail();
       }
 
-      // If cache dir is full, clear it and retry
+      // If cache dir is full, remove files older than 10 days and retry
       if (error.code === 'ENOSPC') {
-        clearCache(tmpPath);
+        req.query.age = 10;
+        return flush(req, res, () => {
+          fs.unlinkSync(tmpPath);
+          retry();
+        });
       }
 
       retry();
@@ -130,26 +122,22 @@ const downloadFile = (req, res, next) => {
   };
 
   // Create directory and trigger download
-  fs.mkdirSync(dir, { recursive: true });
+  fs.mkdirSync(dirPath, { recursive: true });
   download();
 };
 
 // Download GeoTiff
 export const downloadTiff = (req, res, next) => {
   res.locals.filename = `${req.params.imagery}.tif`;
-  res.locals.bucket = req.query.bucket || process.env.IMAGERY_BUCKET;
-  res.locals.region = req.query.region || process.env.IMAGERY_REGION;
-
+  res.locals.dir = 'imagery';
   downloadFile(req, res, next);
 };
 
 // Download Shapefile
 export const downloadShape = (req, res, next) => {
   res.locals.filename = `${req.params.custom}`;
-  res.locals.bucket = req.query.bucket || process.env.CUSTOM_LAYERS_BUCKET;
-  res.locals.region = req.query.region || process.env.CUSTOM_LAYERS_REGION;
   res.locals.zipped = true;
-
+  res.locals.dir = 'custom';
   downloadFile(req, res, next);
 };
 
@@ -182,6 +170,23 @@ export const setDefaultBuffer = (buffer, minBuffer) => {
 export const setDefaultUser = (user) => {
   return (req, res, next) => {
     req.query.user = req.query.user || `${user}`;
+    next();
+  };
+};
+
+// Set S3 region and bucket
+export const setDefaultBucket = (region, bucket) => {
+  return (req, res, next) => {
+    req.query.region = req.query.region || `${region}`;
+    req.query.bucket = req.query.bucket || `${bucket}`;
+    next();
+  };
+};
+
+// Set age limit in days
+export const setDefaultAge = (age) => {
+  return (req, res, next) => {
+    req.query.age = req.query.age || `${age}`;
     next();
   };
 };
