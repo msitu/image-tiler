@@ -25,9 +25,12 @@ const config = {
             <TileCountX>1</TileCountX>
             <TileCountY>1</TileCountY>
           </DataWindow>
+          <MaxConnections>20</MaxConnections>
           <Cache>
             <Path>${process.env.CACHE_PATH}/gdal</Path>
+            <Depth>0</Depth>
           </Cache>
+          <OfflineMode>${process.env.NODE_ENV === 'test'}</OfflineMode>
         </GDAL_WMS>`,
   tms: `<GDAL_WMS>
           <Service name="TMS">
@@ -38,7 +41,7 @@ const config = {
             <UpperLeftY>20037508.34278924</UpperLeftY>
             <LowerRightX>20037508.34278924</LowerRightX>
             <LowerRightY>-20037508.34278924</LowerRightY>
-            <TileLevel>16</TileLevel>
+            <TileLevel>18</TileLevel>
             <TileCountX>1</TileCountX>
             <TileCountY>1</TileCountY>
             <YOrigin>bottom</YOrigin>
@@ -46,9 +49,12 @@ const config = {
           <BlockSizeX>256</BlockSizeX>
           <BlockSizeY>256</BlockSizeY>
           <Projection>EPSG:3857</Projection>
+          <MaxConnections>20</MaxConnections>
           <Cache>
             <Path>${process.env.CACHE_PATH}/gdal</Path>
+            <Depth>0</Depth>
           </Cache>
+          <OfflineMode>${process.env.NODE_ENV === 'test'}</OfflineMode>
         </GDAL_WMS>`,
   wmts: `<GDAL_WMTS>
           <GetCapabilitiesUrl>${process.env.PROXY_BASE_URL}/service?REQUEST=GetCapabilities&amp;SERVICE=WMTS</GetCapabilitiesUrl>
@@ -62,16 +68,19 @@ const config = {
             <LowerRightX>20037508.34278924</LowerRightX>
             <LowerRightY>-20037508.34278924</LowerRightY>
           </DataWindow>
+          <MaxConnections>20</MaxConnections>
           <BandsCount>4</BandsCount>
           <Cache>
             <Path>${process.env.CACHE_PATH}/gdal</Path>
+            <Depth>0</Depth>
           </Cache>
+          <OfflineMode>${process.env.NODE_ENV === 'test'}</OfflineMode>
         </GDAL_WMTS>`
 };
 
 // Write config file
 const filePath = `${process.env.CACHE_PATH}/satellite.xml`;
-fs.writeFileSync(filePath, config.wmts);
+fs.writeFileSync(filePath, config.tms);
 
 export const satelliteLayer = (req, res, next) => {
   const { map } = res.locals;
