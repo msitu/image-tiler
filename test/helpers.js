@@ -1,4 +1,4 @@
-import fs, { existsSync } from 'fs-extra';
+import fs from 'fs-extra';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
 

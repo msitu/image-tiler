@@ -1,7 +1,7 @@
 import app from '../server';
 import supertest from 'supertest';
 import fs from 'fs-extra';
-import { downloadSatellite, downloadImagery, uploadSatellite } from './helpers';
+import { downloadSatellite, downloadImagery } from './helpers';
 
 jest.setTimeout(60000);
 
