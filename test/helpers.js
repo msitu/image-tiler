@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs, { existsSync } from 'fs-extra';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
 
@@ -31,8 +31,41 @@ export const createFiles = (count = 10, age = 0, factory = createImagery) => {
 };
 
 export const downloadImagery = (imagery) => {
-  const destPath = `${process.env.CACHE_PATH}/imagery/${process.env.IMAGERY_REGION}/${process.env.IMAGERY_BUCKET}/${imagery}.tif`;
-  const srcPath = `./fixtures/${imagery}.tif`;
+  const dirPath = `${process.env.CACHE_PATH}/imagery/${process.env.IMAGERY_REGION}/${process.env.IMAGERY_BUCKET}`;
+  const destPath = `${dirPath}/${imagery}.tif`;
+  const srcPath = `${__dirname}/fixtures/imagery/${imagery}.tif`;
 
-  fs.copyFileSync(srcPath, destPath);
+  fs.mkdirSync(dirPath, { recursive: true });
+  fs.copySync(srcPath, destPath);
+};
+
+export const downloadCustom = (custom) => {
+  const dirPath = `${process.env.CACHE_PATH}/custom/${process.env.CUSTOM_LAYERS_REGION}/${process.env.CUSTOM_LAYERS_BUCKET}`;
+  const destPath = `${dirPath}/${custom}`;
+  const srcPath = `${__dirname}/fixtures/custom/${custom}`;
+
+  fs.mkdirSync(dirPath, { recursive: true });
+  fs.copySync(srcPath, destPath);
+};
+
+export const downloadSatellite = () => {
+  const destPath = `${process.env.CACHE_PATH}/gdal`;
+  const srcPath = `${__dirname}/fixtures/gdal`;
+
+  fs.mkdirSync(destPath, { recursive: true });
+  fs.copySync(srcPath, destPath);
+};
+
+export const uploadSatellite = () => {
+  const srcPath = `${process.env.CACHE_PATH}/gdal`;
+  const destPath = `${__dirname}/fixtures/gdal`;
+
+  fs.mkdirSync(destPath, { recursive: true });
+  fs.emptyDirSync(destPath);
+  fs.copySync(srcPath, destPath);
+};
+
+export const wipeCache = () => {
+  fs.emptyDirSync(`${process.env.CACHE_PATH}/imagery`, { recursive: true });
+  fs.emptyDirSync(`${process.env.CACHE_PATH}/custom`, { recursive: true });
 };
