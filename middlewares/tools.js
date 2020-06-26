@@ -2,10 +2,10 @@ import fs from 'fs';
 import http from 'http';
 
 import SphericalMercator from '@mapbox/sphericalmercator';
-import Jimp from 'jimp';
 import unzipper from 'unzipper';
 import Redis from 'ioredis';
 import Redlock from 'redlock';
+import sharp from 'sharp';
 
 import { flush } from './cache';
 
@@ -18,18 +18,12 @@ const redlock = new Redlock([redis], {
 
 // Autocrop image
 export const autocropImage = (req, res, next) => {
-  Jimp.read(res.locals.data)
-    .then(jimpImage => {
-      jimpImage
-        .autocrop({
-          cropOnlyFrames: false,
-          cropSymmetric: false
-        })
-        .getBufferAsync(Jimp.MIME_PNG)
-        .then(result => {
-          res.locals.data = result;
-          next();
-        });
+  sharp(res.locals.data)
+    .trim()
+    .toBuffer()
+    .then((data) => {
+      res.locals.data = data;
+      next();
     })
     .catch(next);
 };
