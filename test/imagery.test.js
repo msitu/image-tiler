@@ -1,6 +1,7 @@
 import app from '../server';
 import supertest from 'supertest';
 import fs from 'fs';
+import { downloadImagery } from './helpers';
 
 jest.setTimeout(60000);
 
@@ -10,6 +11,10 @@ const base = 'imagery';
 const imagery = '7326e81d-40b0-4053-8f33-bd22f9a53df9';
 
 describe('imagery routes', () => {
+  beforeAll(() => {
+    return downloadImagery(imagery);
+  });
+
   test('should return a raster tile', async done => {
     const res = await request.get(`/${base}/${imagery}/17/21455/50471.png`);
 

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 
+import cache from './routes/cache';
 import imagery from './routes/imagery';
 import gssurgo from './routes/gssurgo';
 import combo from './routes/combo';
@@ -37,6 +38,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 // Add layer controllers
+app.use('/cache', cache);
 app.use('/imagery', imagery);
 app.use('/soil', gssurgo);
 app.use('/combo', combo);
