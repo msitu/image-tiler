@@ -1,15 +1,5 @@
 import mapnik from 'mapnik';
 
-// Respond request
-export const respond = (req, res, next) => {
-  // Set cache age to 90 days
-  res.set('Cache-Control', 'max-age=7776000');
-  res.end(res.locals.data);
-
-  // Call Garbage Collector to avoid memory issues
-  global.gc();
-};
-
 // Generate PNG
 export const rasterResponse = (req, res, next) => {
   const { map } = res.locals;

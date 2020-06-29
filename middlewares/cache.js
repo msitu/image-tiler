@@ -1,10 +1,10 @@
 import fs from 'fs';
 
-// Respond request
-export const respond = (req, res, next) => {
+// Set response data
+export const cacheResponse = (req, res, next) => {
   const { files = [] } = res.locals;
-
-  res.status(200).send(`${files.length} files removed from cache.`);
+  res.locals.data = `${files.length} files removed from cache.`;
+  next();
 };
 
 // Flush the whole cache limit by file age

@@ -1,7 +1,7 @@
 import express from 'express';
 
-import { zoomBox } from '../middlewares/tools';
-import { createMap, rasterResponse, vectorResponse, respond } from '../middlewares/mapnik';
+import { zoomBox, respond } from '../middlewares/tools';
+import { createMap, rasterResponse, vectorResponse } from '../middlewares/mapnik';
 import { validateTile, validateSize } from '../middlewares/validators';
 import { gssurgoLayer } from '../middlewares/gssurgo';
 

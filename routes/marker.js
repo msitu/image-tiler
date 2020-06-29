@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { createMap, vectorResponse, rasterResponse, respond } from '../middlewares/mapnik';
+import { createMap, vectorResponse, rasterResponse } from '../middlewares/mapnik';
 import { validateTile, validateSize, validateImagery, validateFlight } from '../middlewares/validators';
-import { zoomBox } from '../middlewares/tools';
+import { zoomBox, respond } from '../middlewares/tools';
 import { markerLayer } from '../middlewares/marker';
 
 const router = express.Router();

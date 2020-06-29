@@ -1,8 +1,9 @@
 import express from 'express';
 
-import { createMap, vectorResponse, respond } from '../middlewares/mapnik';
+import { createMap, vectorResponse } from '../middlewares/mapnik';
 import { validateTile, validateSize, validateField } from '../middlewares/validators';
 import { treeLayer } from '../middlewares/tree';
+import { respond } from '../middlewares/tools';
 
 const router = express.Router();
 
