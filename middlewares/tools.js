@@ -9,7 +9,7 @@ export const respond = (req, res, next) => {
   res.set('Cache-Control', res.locals.cache || 'max-age=7776000');
 
   // Send data
-  res.end(res.locals.data);
+  res.send(res.locals.data);
 
   // Call Garbage Collector to avoid memory issues
   global.gc();

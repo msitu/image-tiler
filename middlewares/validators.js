@@ -126,3 +126,23 @@ export const validateBucket = (req, res, next) => {
 
   throw new ValidationError(`Bucket: ${req.query.bucket}`, 'String');
 };
+
+// Validate wait
+export const validateWait = (req, res, next) => {
+  if (!req.query.wait || validator.isBoolean(req.query.wait)) {
+    req.query.wait = validator.toBoolean(req.query.wait || 'false');
+    return next();
+  }
+
+  throw new ValidationError(`Wait: ${req.query.wait}`, 'Boolean');
+};
+
+// Validate path
+export const validatePath = (req, res, next) => {
+  if (!req.query.path || validator.matches(req.query.path, /^\/(?:.*)\*$/)) {
+    req.query.path = req.query.path || '/*';
+    return next();
+  }
+
+  throw new ValidationError(`Path: ${req.query.path}`, 'String (/[path]/*, /*)');
+};

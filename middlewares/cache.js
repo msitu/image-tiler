@@ -1,9 +1,19 @@
 import fs from 'fs';
+import AWS from 'aws-sdk';
+
+const cloudFront = new AWS.CloudFront();
 
 // Set response data
 export const cacheResponse = (req, res, next) => {
-  const { files = [] } = res.locals;
-  res.locals.data = `${files.length} files removed from cache.`;
+  const { files = [], invalidations = [] } = res.locals;
+
+  res.locals.data = {
+    files: files.length,
+    invalidations: invalidations.length
+  };
+
+  res.set('Content-Type', 'application/json');
+
   next();
 };
 
@@ -56,16 +66,51 @@ const removeFile = (req, res, next) => {
   next();
 };
 
+// Invalidate CloudFront
+export const invalidate = (req, res, next) => {
+  const { path, wait } = req.query;
+
+  const params = {
+    DistributionId: process.env.CLOUDFRONT_DISTRIBUTION,
+    InvalidationBatch: {
+      CallerReference: `${Date.now()}`,
+      Paths: {
+        Quantity: 1,
+        Items: [path]
+      }
+    }
+  };
+
+  cloudFront.createInvalidation(params).promise().then((data) => {
+    res.locals.invalidations = data.Invalidation.InvalidationBatch.Paths.Items;
+
+    if (!wait) {
+      return next();
+    }
+
+    const params = {
+      DistributionId: process.env.CLOUDFRONT_DISTRIBUTION,
+      Id: data.Invalidation.Id
+    };
+
+    cloudFront.waitFor('invalidationCompleted', params).promise().then(() => next());
+  }).catch(next);
+};
+
 // Remove GeoTiff
 export const removeTiff = (req, res, next) => {
   res.locals.filename = `${req.params.imagery}.tif`;
   res.locals.dir = 'imagery';
+  req.query.path = `/imagery/${req.params.imagery}/*`;
+
   removeFile(req, res, next);
 };
 
 // Remove Shapefile
 export const removeShape = (req, res, next) => {
-  res.locals.filename = `${req.params.custom}`;
+  res.locals.filename = req.params.custom;
   res.locals.dir = 'custom';
+  req.query.path = `/custom/${req.params.custom}/*`;
+
   removeFile(req, res, next);
 };

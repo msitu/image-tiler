@@ -1,7 +1,4 @@
-import app from '../server';
-import supertest from 'supertest';
-
-const request = supertest(app);
+import { app, request } from './helpers';
 
 describe('main routes', () => {
   test('index should redirect to status', async done => {

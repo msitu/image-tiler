@@ -1,7 +1,5 @@
-import app from '../server';
-import supertest from 'supertest';
+import { app, request } from './helpers';
 
-const request = supertest(app);
 const base = 'combo';
 const imagery = '7326e81d-40b0-4053-8f33-bd22f9a53df9';
 
@@ -86,7 +84,45 @@ describe('validators', () => {
   });
 
   test('should return an error if age format is wrong', async done => {
-    const res = await request.get(`/cache?age=AAA`);
+    const base = '/cache';
+
+    const res = await request.get(`${base}?age=AAA`);
+
+    expect(res.status).toBe(400);
+
+    done();
+  });
+
+  test('should return an error if wait format is wrong', async done => {
+    const base = '/cache/invalidate';
+
+    const res = await request.get(`${base}?wait=AAA`);
+
+    expect(res.status).toBe(400);
+
+    done();
+  });
+
+  test('should return an error if path format is wrong', async done => {
+    const base = '/cache/invalidate';
+
+    let res = await request.get(`${base}?path=AAA`);
+
+    expect(res.status).toBe(400);
+
+    res = await request.get(`${base}?path=foo/bar/*`);
+
+    expect(res.status).toBe(400);
+
+    res = await request.get(`${base}?path=foo/bar/`);
+
+    expect(res.status).toBe(400);
+
+    res = await request.get(`${base}?path=foo/bar`);
+
+    expect(res.status).toBe(400);
+
+    res = await request.get(`${base}?path=/foo/bar/`);
 
     expect(res.status).toBe(400);
 
