@@ -1,8 +1,18 @@
+import supertest from 'supertest';
 import fs from 'fs-extra';
 import path from 'path';
 import { v4 as uuid } from 'uuid';
 
-export const fixture = fs.readFileSync;
+import app from '../server';
+
+export { app };
+export const request = supertest(app);
+
+jest.setTimeout(60000);
+
+export const fixture = (path) => {
+  return fs.readFileSync(`test/fixtures/${path}`);
+};
 
 export const createFile = (filePath) => {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });

@@ -1,11 +1,12 @@
 import express from 'express';
 
-import { zoomBox, downloadTiff, setDefaultSize, setDefaultRatio, setDefaultBuffer, setDefaultUser } from '../middlewares/tools';
-import { createMap, rasterResponse, respond, setExtent } from '../middlewares/mapnik';
+import { zoomBox, setDefaultSize, setDefaultRatio, setDefaultBuffer, setDefaultUser, respond, noCache } from '../middlewares/tools';
+import { createMap, rasterResponse, setExtent } from '../middlewares/mapnik';
 import { validateTile, validateImagery, validateSize, validateBuffer, validateFlight, validateBucket } from '../middlewares/validators';
 import { satelliteLayer } from '../middlewares/satellite';
 import { imageryLayer } from '../middlewares/imagery';
 import { markerLayer } from '../middlewares/marker';
+import { downloadTiff } from '../middlewares/download';
 
 const router = express.Router();
 
@@ -53,6 +54,7 @@ router
     satelliteLayer,
     markerLayer,
     rasterResponse,
+    noCache,
     respond
   )
   .get('/issues/:imagery/:flight.png',

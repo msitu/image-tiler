@@ -1,10 +1,10 @@
 {
   "name": "image-tiler",
-  "version": "3.17.1",
+  "version": "3.18.0",
   "description": "Ceres Imaging Tile Server",
   "type": "module",
   "scripts": {
-    "dev": "npx nodemon -e js,xml,json --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
+    "dev": "npx nodemon -e js,xml,json --inspect=0.0.0.0:9229 --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
     "start": "node --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
     "test": "NODE_ENV=test node --expose-gc ./node_modules/.bin/jest --forceExit",
     "test:watch": "npm run test --watch",
@@ -22,6 +22,7 @@
   "main": "server.js",
   "dependencies": {
     "@mapbox/sphericalmercator": "~1.1.0",
+    "aws-sdk": "^2.707.0",
     "cors": "^2.8.5",
     "express": "~4.16.4",
     "ioredis": "^4.17.3",

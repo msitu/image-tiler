@@ -1,9 +1,10 @@
 import express from 'express';
 
-import { zoomBox, autocropImage, downloadTiff, setDefaultSize } from '../middlewares/tools';
-import { createMap, rasterResponse, respond, setExtent } from '../middlewares/mapnik';
+import { zoomBox, autocropImage, setDefaultSize, respond } from '../middlewares/tools';
+import { createMap, rasterResponse, setExtent } from '../middlewares/mapnik';
 import { validateTile, validateImagery, validateSize, validateBucket } from '../middlewares/validators';
 import { imageryLayer } from '../middlewares/imagery';
+import { downloadTiff } from '../middlewares/download';
 
 const router = express.Router();
 

@@ -1,12 +1,5 @@
-import app from '../server';
-import supertest from 'supertest';
-import fs from 'fs';
-import { downloadImagery } from './helpers';
+import { app, request, fixture, downloadImagery } from './helpers';
 
-jest.setTimeout(60000);
-
-const request = supertest(app);
-const fixture = fs.readFileSync;
 const base = 'imagery';
 const imagery = '7326e81d-40b0-4053-8f33-bd22f9a53df9';
 
@@ -18,7 +11,7 @@ describe('imagery routes', () => {
   test('should return a raster tile', async done => {
     const res = await request.get(`/${base}/${imagery}/17/21455/50471.png`);
 
-    expect(res.body.equals(fixture('test/fixtures/imagery-raster-tile.png'))).toBeTruthy();
+    expect(res.body).toEqual(fixture('imagery-raster-tile.png'));
 
     done();
   });
@@ -26,7 +19,7 @@ describe('imagery routes', () => {
   test('should return a single image', async done => {
     const res = await request.get(`/${base}/${imagery}.png`);
 
-    expect(res.body.equals(fixture('test/fixtures/imagery-image.png'))).toBeTruthy();
+    expect(res.body).toEqual(fixture('imagery-image.png'));
 
     done();
   });
@@ -34,7 +27,7 @@ describe('imagery routes', () => {
   test('should accept region and bucket as parameters', async done => {
     const res = await request.get(`/${base}/${imagery}.png?region=us-west-2&bucket=ceres-geotiff-data`);
 
-    expect(res.body.equals(fixture('test/fixtures/imagery-image.png'))).toBeTruthy();
+    expect(res.body).toEqual(fixture('imagery-image.png'));
 
     done();
   });
@@ -54,7 +47,7 @@ describe('imagery routes', () => {
   test('should return a single image with specific size', async done => {
     const res = await request.get(`/${base}/${imagery}.png?size=512`);
 
-    expect(res.body.equals(fixture('test/fixtures/imagery-image-size.png'))).toBeTruthy();
+    expect(res.body).toEqual(fixture('imagery-image-size.png'));
 
     done();
   });
