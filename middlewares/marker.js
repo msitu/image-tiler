@@ -40,6 +40,7 @@ const buildQuery = (imagery, flight, user, exclusive) => {
       ON pif.id = dwf.flight_id
     WHERE dwf.type = 'Point'
       AND dwf.deleted = false
+      AND dwf.is_open = true
       AND (
         dwf.flight_id = '${flight}'
         OR (
