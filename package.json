@@ -4,7 +4,8 @@
   "description": "Ceres Imaging Tile Server",
   "type": "module",
   "scripts": {
-    "dev": "npx nodemon -e js,xml,json --inspect=0.0.0.0:9229 --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
+    "dev": "npx nodemon -e js,xml,json --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
+    "dev:inspect": "npm run dev --inspect=0.0.0.0:9229",
     "start": "node --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
     "test": "NODE_ENV=test node --expose-gc ./node_modules/.bin/jest --forceExit",
     "test:watch": "npm run test --watch",
