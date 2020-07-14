@@ -29,23 +29,30 @@ const downloadFile = (req, res, next) => {
       return next();
     }
 
+    // Get the lock to avoid multiple downloads for the same file
     const lock = await redlock.lock(filename, 10000);
 
+    // If something fails, remove temporal file, unlock the queue and respond with error
     const fail = () => {
       fs.unlinkSync(tmpPath);
       lock.unlock().catch(next);
       res.status(404).send('Error downloading source data file, please check params');
     };
 
+    // Before calling download recursively, we have to unlock the queue
+    // If the unlock fails is because the lock was lost so we can ignore the error
     const retry = () => {
       lock.unlock().catch((e) => {});
       download();
     };
 
+    // This is about milliseconds and it does not happen often
+    // but sometimes the file gets downloaded just after the function gets the lock
     if (fs.existsSync(path)) {
       return retry();
     }
 
+    // Download error handler
     const onError = (error) => {
       // If file not found, trigger error!
       if (error.code === 'ENOTFOUND') {
@@ -64,6 +71,7 @@ const downloadFile = (req, res, next) => {
       retry();
     };
 
+    // Create the file in the local cache, remove the temp file
     const file = fs.createWriteStream(tmpPath)
       .on('error', onError)
       .on('finish', () => {
@@ -79,6 +87,7 @@ const downloadFile = (req, res, next) => {
         }
       });
 
+    // Get the stream and pipe to file
     http.get(url, (response) => {
       if (response.statusCode !== 200) {
         fail();

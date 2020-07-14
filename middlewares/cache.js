@@ -51,7 +51,27 @@ export const flush = (req, res, next) => {
   next();
 };
 
-// Remove single file from the cache
+// Remove directory from the cache (for Shapefiles)
+const removeDir = (req, res, next) => {
+  const { bucket, region } = req.query;
+  const { dir, filename } = res.locals;
+
+  const path = `${process.env.CACHE_PATH}/${dir}/${region}/${bucket}/${filename}`;
+
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(file => {
+      fs.unlinkSync(`${path}/${file}`);
+    });
+
+    fs.rmdirSync(path);
+
+    res.locals.files = [path];
+  }
+
+  next();
+};
+
+// Remove single file from the cache (for GeoTiffs)
 const removeFile = (req, res, next) => {
   const { bucket, region } = req.query;
   const { dir, filename } = res.locals;
@@ -93,7 +113,7 @@ export const invalidate = (req, res, next) => {
       Id: data.Invalidation.Id
     };
 
-    cloudFront.waitFor('invalidationCompleted', params).promise().then(() => next());
+    cloudFront.waitFor('invalidationCompleted', params).promise().then(next);
   }).catch(next);
 };
 
@@ -112,5 +132,5 @@ export const removeShape = (req, res, next) => {
   res.locals.dir = 'custom';
   req.query.path = `/custom/${req.params.custom}/*`;
 
-  removeFile(req, res, next);
+  removeDir(req, res, next);
 };
