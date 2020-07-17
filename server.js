@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import path from 'path';
 
 import cache from './routes/cache';
 import imagery from './routes/imagery';
@@ -10,6 +11,7 @@ import fieldgeo from './routes/fieldgeo';
 import marker from './routes/marker';
 import custom from './routes/custom';
 import tree from './routes/tree';
+import ceresFlights from './routes/ceres_flights'
 
 // Create Express App
 const app = express();
@@ -46,10 +48,11 @@ app.use('/fieldgeo', fieldgeo);
 app.use('/marker', marker);
 app.use('/custom', custom);
 app.use('/tree', tree);
+app.use('/ceresflights', ceresFlights)
 
-// Redirect root to status
+// Redirect to barebones tile client
 app.get('/', (req, res) => {
-  res.redirect('/status');
+  res.sendFile(path.join(process.cwd(), 'index.html'))
 });
 
 // Server status check

@@ -1,0 +1,13 @@
+<Map>
+  <Style filter-mode="first" name="imagery">
+    <Rule>
+      <RasterSymbolizer opacity="1">
+        <RasterColorizer default-mode="linear">
+          <stop color="black" value = "0" />
+          <stop color="white" value = "65534" />
+          <stop color="transparent" value = "65535" />
+        </RasterColorizer>
+      </RasterSymbolizer>
+    </Rule>
+  </Style>
+</Map>
