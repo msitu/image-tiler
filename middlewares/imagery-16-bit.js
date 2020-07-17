@@ -19,6 +19,12 @@ export const imageryLayer16Bit = (req, res, next) => {
     band: 3,
     file: path
   });
+  
+  const [minx, miny, maxx, maxy]  = layer.datasource.extent()
+  const lat = (miny + maxy)/2
+  const lon = (minx + maxx)/2
+  res.locals.center = [lat, lon]
+
   layer.styles = ['imagery'];
 
   map.add_layer(layer);

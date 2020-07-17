@@ -14,7 +14,13 @@ const setLocalPath = (req, res, next) => {
 }
 
 const setS3Path = (req, res, next) => {
-  // res.locals.path = `imagery/${req.params.imagery}.tif`
+  // TODO: implement
+  next()
+}
+
+const setCenter = (req, res, next) => {
+  const {center} = res.locals
+  res.locals.data = center
   next()
 }
 
@@ -37,6 +43,14 @@ router
     setExtent,
     rasterResponse,
     autocropImage,
+    respond
+  )
+  .get('/center/:imagery',
+    validateSize,
+    setLocalPath,
+    createMap,
+    imageryLayer16Bit,
+    setCenter,
     respond
   );
 
