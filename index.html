@@ -25,31 +25,19 @@
    <body>
         <div id="mapid"></div>
         <script>
-            const tifMeta1 = {
-                center: [38.41608, -122.40812],
-                filename: '2019-09-23 1380 Harlan Blocks A VNIR'
-            }
-
-            const tifMeta2 = {
-                center: [38.9307, -122.764],
-                filename: '2020-06-20 2378 Red Hills D VNIR'
-            }
-            const tifMeta = tifMeta2
-
             const tifFiles = [
                 '2019-09-23 1380 Harlan Blocks A VNIR',
                 '2020-06-20 2378 Red Hills D VNIR'
             ]
-            const filename = tifFiles[0]
+            const filename = tifFiles[1]
 
             const map = L.map('mapid', {zoom: 16});
-            const tile = new L.tileLayer(`/ceresflights/tiles/${tifMeta.filename}/{z}/{x}/{y}`)
+            const tile = new L.tileLayer(`/ceresflights/tiles/${filename}/{z}/{x}/{y}`)
             tile.addTo(map);
 
-            fetch(`/ceresflights/center/${tifMeta.filename}`)
+            fetch(`/ceresflights/center/${filename}`)
                 .then((res) => res.json())
                 .then((center) => {
-                    // console.log('The center of', tifMeta.filename, 'is:', center)
                     map.setView(center)
                 })
 
