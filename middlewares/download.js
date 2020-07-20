@@ -2,15 +2,15 @@ import fs from 'fs';
 import http from 'http';
 
 import unzipper from 'unzipper';
-import Redis from 'ioredis';
-import Redlock from 'redlock';
+// import Redis from 'ioredis';
+// import Redlock from 'redlock';
 
 import { flush } from './cache';
 
-const redis = new Redis({ host: process.env.REDIS_HOST });
-const redlock = new Redlock([redis], {
-  retryCount: -1
-});
+// const redis = new Redis({ host: process.env.REDIS_HOST });
+// const redlock = new Redlock([redis], {
+//   retryCount: -1
+// });
 
 // Download file from S3 to the local cache
 const downloadFile = (req, res, next) => {
