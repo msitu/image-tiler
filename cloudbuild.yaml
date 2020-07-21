@@ -1,0 +1,9 @@
+steps:
+- name: 'docker'
+  env:
+  - 'NODE_ENV=development'
+  - 'PORT=80'
+  - 'HOST=0.0.0.0'
+  args: ['build', '-t', 'gcr.io/ceres-imaging-science/image_tiler:latest', '.']
+
+# run with `gcloud builds submit .`

@@ -15,3 +15,18 @@
 ### Testing
 
 `doco run --rm tiler npm run test`
+
+### Docker and Kubernetes
+
+```
+# build locally using this, so the minikube docker daemon is used
+minikube start
+eval $(minikube docker-env)
+docker build -t image_tiler .
+kubectl apply -f kube
+minikube ip
+kubectl get services
+
+# Then navigate to the minikube IP and the port shown for the tiler service
+
+```

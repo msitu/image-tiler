@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tiler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tiler
+  template:
+    metadata:
+      labels:
+        app: tiler
+    spec:
+      containers:
+        - name: tiler
+          image: image_tiler:latest
+          ports:
+            - containerPort: 80
+            - containerPort: 9229
+          env:
+            - name: PORT
+              value: "80"
+            - name: HOST
+              value: "0.0.0.0"
+          imagePullPolicy: Never
