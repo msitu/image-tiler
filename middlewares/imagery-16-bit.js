@@ -37,3 +37,9 @@ const calculateCenter = (datasource) => {
   const lon = (minx + maxx)/2
   return [lat, lon]
 }
+
+export const setCenter = (req, res, next) => {
+  const {center} = res.locals
+  res.locals.data = center
+  next()
+}

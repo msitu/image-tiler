@@ -23,8 +23,10 @@
 minikube config set disk-size 8000
 minikube start
 eval $(minikube docker-env)
-docker build -t image_tiler .
-kubectl apply -f kube
+## skaffold build is preferable to kubernetes build
+# docker build -t image_tiler .
+# kubectl apply -f kube
+skaffold dev --no-prune=false --cache-artifacts=false
 minikube ip
 kubectl get services
 
