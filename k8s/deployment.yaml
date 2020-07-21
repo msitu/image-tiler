@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tiler2
+spec:
+  ports:
+  - port: 8888
+    targetPort: 80
+  type: LoadBalancer
+  selector:
+    app: tiler2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tiler2
+spec:
+  selector:
+    matchLabels:
+      app: tiler2
+  template:
+    metadata:
+      labels:
+        app: tiler2
+    spec:
+      containers:
+      - name: tiler2
+        image: image_tiler_2
+        ports:
+        - containerPort: 80

@@ -1,0 +1,27 @@
+apiVersion: skaffold/v2beta5
+kind: Config
+
+build:
+  artifacts:
+  - image: image_tiler_2
+    context: .
+
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    build:
+      artifacts:
+      - image: image_tiler_2
+        context: .
+        docker:
+          buildArgs:
+            ENV: development
+            HOST: "0.0.0.0"
+            PORT: "80"
+        # sync:
+        #   manual:
+        #   # Sync all the javascript files that are in the src folder
+        #   # with the container src folder
+        #   - src: '**/*.js'
+        #     dest: .

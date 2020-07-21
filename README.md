@@ -20,6 +20,7 @@
 
 ```
 # build locally using this, so the minikube docker daemon is used
+minikube config set disk-size 8000
 minikube start
 eval $(minikube docker-env)
 docker build -t image_tiler .
