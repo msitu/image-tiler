@@ -22,7 +22,6 @@ profiles:
             HOST: "0.0.0.0"
             PORT: "80"
             ROOTPATH: "/flights"
-            # ROOTPATH: "/Users/msitu/flights"
         # sync:
         #   manual:
         #   # Sync all the javascript files that are in the src folder

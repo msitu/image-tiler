@@ -1,6 +1,31 @@
 # Ceres Imaging Tile Server
 
-[![CircleCI](https://circleci.com/gh/ceresimaging/image-tiler.svg?style=svg)](https://circleci.com/gh/ceresimaging/image-tiler)
+TODOS:
+- make this work with the file server
+- derive helm chart with dev and staging and prod
+
+## Local Kubernetes
+1. put some tif files on your local machine (e.g. $HOME/flights)
+2. install minikube (e.g. brew install minikube)
+3. configure minikube
+```
+minikube start
+eval $(minikube docker-env)
+
+# mount flights in minikube: https://minikube.sigs.k8s.io/docs/handbook/persistent_volumes/
+minikube mount ~/flights:/tmp/hostpath_pv
+
+# optional: do this if you get any "out of disk space" errors
+minikube config set disk-size 20000
+```
+4. start local cluster
+```
+skaffold dev --no-prune=false --cache-artifacts=false
+minikube ip
+kubectl get services
+
+# Then navigate to the minikube IP and the port shown for the tiler service
+```
 
 ## How to make it work locally:
 
@@ -15,27 +40,3 @@
 ### Testing
 
 `doco run --rm tiler npm run test`
-
-### Docker and Kubernetes
-
-```
-# build locally using this, so the minikube docker daemon is used
-minikube config set disk-size 8000
-minikube start
-eval $(minikube docker-env)
-
-# mount flights in minikube: https://minikube.sigs.k8s.io/docs/handbook/persistent_volumes/
-minikube mount ~/flights:/tmp/hostpath_pv
-
-## skaffold build is preferable to kubernetes build
-# docker build -t image_tiler .
-# kubectl apply -f kube
-skaffold dev --no-prune=false --cache-artifacts=false
-minikube ip
-kubectl get services
-
-# Then navigate to the minikube IP and the port shown for the tiler service
-
-# cleanup
-docker images -a | grep "PATTERN" | awk '{print $3}' | xargs docker rmi
-```
