@@ -1,7 +1,9 @@
-apiVersion: skaffold/v2beta5
+apiVersion: skaffold/v2beta1
 kind: Config
 
 build:
+  # tagPolicy:
+  #   gitCommit: {}
   artifacts:
   - image: image_tiler_2
     context: .
@@ -19,7 +21,8 @@ profiles:
             ENV: development
             HOST: "0.0.0.0"
             PORT: "80"
-            ROOTPATH: "."
+            ROOTPATH: "/flights"
+            # ROOTPATH: "/Users/msitu/flights"
         # sync:
         #   manual:
         #   # Sync all the javascript files that are in the src folder

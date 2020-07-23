@@ -23,6 +23,10 @@
 minikube config set disk-size 8000
 minikube start
 eval $(minikube docker-env)
+
+# mount flights in minikube: https://minikube.sigs.k8s.io/docs/handbook/persistent_volumes/
+minikube mount ~/flights:/tmp/hostpath_pv
+
 ## skaffold build is preferable to kubernetes build
 # docker build -t image_tiler .
 # kubectl apply -f kube
@@ -32,4 +36,6 @@ kubectl get services
 
 # Then navigate to the minikube IP and the port shown for the tiler service
 
+# cleanup
+docker images -a | grep "PATTERN" | awk '{print $3}' | xargs docker rmi
 ```
