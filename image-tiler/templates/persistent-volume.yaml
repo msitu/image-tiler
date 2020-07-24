@@ -10,5 +10,6 @@ spec:
     storage: {{ .Values.volume.storage }}
   accessModes:
     - {{ .Values.volume.accessModes }}
+  persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: {{ .Values.volume.hostPath }}

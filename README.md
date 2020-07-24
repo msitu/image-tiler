@@ -5,7 +5,7 @@
 Containerized tile server for large GeoTiffs.
 
 ## Setup local kubernetes
-1. put some tif files on your local machine (e.g. $HOME/flights)
+1. put some tif files on your local machine (e.g. $HOME/flights), update index.html `tiffFiles` variable.
 2. install minikube (e.g. brew install minikube)
 3. configure minikube:
 ```bash
