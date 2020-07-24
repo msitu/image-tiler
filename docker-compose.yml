@@ -11,10 +11,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - NODE_ENV=development
+        - ENV=development
     volumes:
       - .:/srv/tiler
-      - ~/flights:/flights
     ports:
       - 8888:80
       - 9229:9229
