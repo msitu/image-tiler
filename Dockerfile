@@ -3,7 +3,7 @@ FROM maurimiranda/node-mapnik-gdal:latest
 EXPOSE 8888
 
 # TODO: conditionally set env vars based on prod/dev mode
-ARG ENV="production"
+ARG NODE_ENV="production"
 ARG HOST
 ARG PORT
 ARG ROOTPATH

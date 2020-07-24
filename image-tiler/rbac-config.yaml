@@ -1,0 +1,22 @@
+# To fix the following error:
+  # Error: release improc failed: namespaces "improc" is forbidden: User "system:serviceaccount:kube-system:default" cannot get resource "namespaces" in API group "" in the namespace "improc"
+# https://support.sumologic.com/hc/en-us/articles/360037704393-Kubernetes-Helm-install-fails-with-Error-namespaces-sumologic-is-forbidden-User-system-serviceaccount-kube-system-default-cannot-get-resource-namespaces-in-API-group-in-the-namespace-sumologic-
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tiller
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system

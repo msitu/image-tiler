@@ -1,30 +1,64 @@
-apiVersion: skaffold/v2beta1
+apiVersion: skaffold/v2beta2
 kind: Config
 
+# Defaults to development deployment. Safety first!
 build:
   # tagPolicy:
-  #   gitCommit: {}
+  #   sha256: {}
   artifacts:
-  - image: image_tiler_2
-    context: .
+  - image: image-tiler
+    docker:
+      buildArgs:
+        NODE_ENV: development
+        HOST: "0.0.0.0"
+        PORT: "80" # keep in sync with values-dev.yaml
+        ROOTPATH: "/flights" # keep in sync with values-dev.yaml
 
+deploy:
+  helm:
+    releases:
+      - name: image-tiler-local
+        chartPath: image-tiler
+        values:
+          image: image-tiler
+        # wait: true
+        # valuesFiles:
+        #   - image-tiler/values-dev.yaml
+        # needed to make skaffold and helm work together
+      # - name: image-tiler-prod
+      #   chartPath: image-tiler
+      #   values:
+      #     image: image-tiler
+      #   # wait: true
+      #   # valuesFiles:
+      #   #   - image-tiler/values-dev.yaml
+      #   # needed to make skaffold and helm work together          
+
+# There's some weirdness because helm can't control the docker build with values.yaml's.
+# So the buildArgs need to be kept in sync.
 profiles:
-  - name: dev
+  - name: local
+    # TODO: check that the activation happens w and w/o the profile name
     activation:
       - command: dev
     build:
       artifacts:
-      - image: image_tiler_2
-        context: .
+      - image: image-tiler
         docker:
           buildArgs:
-            ENV: development
+            NODE_ENV: development
             HOST: "0.0.0.0"
-            PORT: "80"
-            ROOTPATH: "/flights"
-        # sync:
-        #   manual:
-        #   # Sync all the javascript files that are in the src folder
-        #   # with the container src folder
-        #   - src: '**/*.js'
-        #     dest: .
+            PORT: "80" # keep in sync with values-dev.yaml
+            ROOTPATH: "/flights" # keep in sync with values-dev.yaml
+  # - name: prod
+  #   build:
+  #     artifacts:
+  #     - image: image-tiler
+  #       docker:
+  #         buildArgs:
+  #           # TODO: change this default value to 'production' when ready
+  #           NODE_ENV: "production"
+  #           # TODO: change this default value to production HOST when ready
+  #           HOST: "0.0.0.0"
+  #           PORT: "80" # keep in sync with values-dev.yaml
+  #           ROOTPATH: "/flights" # keep in sync with values-dev.yaml
