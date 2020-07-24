@@ -3,14 +3,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import path from 'path';
 
-import cache from './routes/cache';
-// import imagery from './routes/imagery';
-// import gssurgo from './routes/gssurgo';
-// import combo from './routes/combo';
-// import fieldgeo from './routes/fieldgeo';
-// import marker from './routes/marker';
-// import custom from './routes/custom';
-// import tree from './routes/tree';
 import ceresFlights from './routes/ceres_flights'
 
 // Create Express App
@@ -39,15 +31,6 @@ if (process.env.NODE_ENV === 'test') {
   });
 }
 
-// Add layer controllers
-app.use('/cache', cache);
-// app.use('/imagery', imagery);
-// app.use('/soil', gssurgo);
-// app.use('/combo', combo);
-// app.use('/fieldgeo', fieldgeo);
-// app.use('/marker', marker);
-// app.use('/custom', custom);
-// app.use('/tree', tree);
 app.use('/ceresflights', ceresFlights)
 
 // Redirect to barebones tile client
