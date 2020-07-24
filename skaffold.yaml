@@ -1,4 +1,4 @@
-apiVersion: skaffold/v2beta2
+apiVersion: skaffold/v2beta5
 kind: Config
 
 # Defaults to development deployment. Safety first!
@@ -19,7 +19,7 @@ deploy:
     releases:
       - name: image-tiler-local
         chartPath: image-tiler
-        values:
+        artifactOverrides:
           image: image-tiler
         # wait: true
         # valuesFiles:
