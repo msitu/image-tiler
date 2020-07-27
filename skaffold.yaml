@@ -22,17 +22,15 @@ deploy:
         values:
           image: image-tiler
         # wait: true
-        # valuesFiles:
-        #   - image-tiler/values-dev.yaml
-        # needed to make skaffold and helm work together
+        valuesFiles:
+          - image-tiler/values-dev.yaml
       # - name: image-tiler-prod
       #   chartPath: image-tiler
       #   values:
       #     image: image-tiler
       #   # wait: true
       #   # valuesFiles:
-      #   #   - image-tiler/values-dev.yaml
-      #   # needed to make skaffold and helm work together          
+      #   #   - image-tiler/values-dev.yaml        
 
 # There's some weirdness because helm can't control the docker build with values.yaml's.
 # So the buildArgs need to be kept in sync.
