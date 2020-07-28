@@ -16,7 +16,7 @@ volume:
   claim: flights-dir-claim
   hostPath: "/tmp/hostpath_pv"
   storage: 1Gi
-  storageClass: local-pv
+  storageClass: pv
   accessModes: ReadWriteOnce
 service:
   # name: nginx

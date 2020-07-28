@@ -1,53 +1,35 @@
 apiVersion: skaffold/v2beta2
 kind: Config
 
-# Defaults to development deployment. Safety first!
-build:
-  # tagPolicy:
-  #   sha256: {}
-  artifacts:
-  - image: image-tiler
-    docker:
-      buildArgs:
-        NODE_ENV: development
-        HOST: "0.0.0.0"
-        PORT: "80" # keep in sync with values-dev.yaml
-        ROOTPATH: "/flights" # keep in sync with values-dev.yaml
-
-deploy:
-  helm:
-    releases:
-      - name: image-tiler-local
-        chartPath: image-tiler
-        values:
-          image: image-tiler
-        # wait: true
-        valuesFiles:
-          - image-tiler/values-dev.yaml
-      # - name: image-tiler-prod
-      #   chartPath: image-tiler
-      #   values:
-      #     image: image-tiler
-      #   # wait: true
-      #   # valuesFiles:
-      #   #   - image-tiler/values-dev.yaml        
-
-# There's some weirdness because helm can't control the docker build with values.yaml's.
-# So the buildArgs need to be kept in sync.
+# # Defaults to development deployment. Safety first!
 profiles:
-  - name: local
-    # TODO: check that the activation happens w and w/o the profile name
+  - name: dev
     activation:
       - command: dev
     build:
+      tagPolicy:
+        sha256: {}
       artifacts:
-      - image: image-tiler
+      - image: image-tiler-dev
         docker:
           buildArgs:
             NODE_ENV: development
             HOST: "0.0.0.0"
-            PORT: "80" # keep in sync with values-dev.yaml
-            ROOTPATH: "/flights" # keep in sync with values-dev.yaml
+            PORT: "80" # keep in sync with values.yaml
+            ROOTPATH: "/flights" # keep in sync with values.yaml
+    deploy:
+      helm:
+        releases:
+          - name: image-tiler-dev
+            chartPath: image-tiler
+            values:
+              image: image-tiler-dev
+            overrides:
+              volume:
+                mountPath: "/flights"
+                name: flights-vol-dev
+                claim: flights-dir-claim-dev
+                storageClass: dev-pv
   # - name: prod
   #   build:
   #     artifacts:
