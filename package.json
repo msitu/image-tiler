@@ -1,7 +1,7 @@
 {
-  "name": "image-tiler",
-  "version": "3.19.1",
-  "description": "Ceres Imaging Tile Server",
+  "name": "image-tiler-icin",
+  "version": "0.1.0",
+  "description": "Ceres Imaging Tile Server for ICIN",
   "type": "module",
   "scripts": {
     "dev": "npx nodemon -e js,xml,json --expose-gc --experimental-modules --es-module-specifier-resolution=node server",
@@ -17,9 +17,9 @@
       "test"
     ]
   },
-  "author": "Ceres Dev Team",
+  "author": "Mike Situ <msitu@ceresimaging.net>",
   "license": "ISC",
-  "repository": "https://github.com/ceresimaging/image-tiler",
+  "repository": "https://github.com/msitu/image-tiler",
   "main": "server.js",
   "dependencies": {
     "@mapbox/sphericalmercator": "~1.1.0",
