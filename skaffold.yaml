@@ -1,60 +1,60 @@
-apiVersion: skaffold/v2beta2
-kind: Config
+# apiVersion: skaffold/v2beta2
+# kind: Config
 
-# Defaults to development deployment. Safety first!
-profiles:
-  - name: dev
-    activation:
-      - command: dev
-    build:
-      tagPolicy:
-        sha256: {}
-      artifacts:
-      - image: image-tiler-dev
-        docker:
-          buildArgs:
-            NODE_ENV: development
-            HOST: "0.0.0.0"
-            PORT: "80" # keep in sync with values.yaml
-            ROOTPATH: "/flights" # keep in sync with values.yaml
-    deploy:
-      helm:
-        releases:
-          - name: image-tiler-dev
-            chartPath: image-tiler
-            values:
-              image: image-tiler-dev
-            overrides:
-              volume:
-                mountPath: "/flights"
-                name: flights-vol-dev
-                claim: flights-dir-claim-dev
-                storageClass: pv-dev
-  - name: prod
-    build:
-      tagPolicy:
-        sha256: {}
-      artifacts:
-      - image: image-tiler-prod
-        docker:
-          buildArgs:
-            # TODO: change this default value to 'production' when ready
-            NODE_ENV: "production"
-            # TODO: change this default value to production HOST when ready
-            HOST: "0.0.0.0"
-            PORT: "80" # keep in sync with values.yaml
-            ROOTPATH: "/flights" # keep in sync with values.yaml
-    deploy:
-      helm:
-        releases:
-          - name: image-tiler-prod
-            chartPath: image-tiler
-            values:
-              image: image-tiler-prod
-            overrides:
-              replicaCount: 1 # TODO: make this a production appropriate number
-              volume:
-                mountPath: "/flights"
-                name: flights-vol-prod
-                claim: flights-dir-claim-prod
-                storageClass: pv-prod
+# # Defaults to development deployment. Safety first!
+# profiles:
+#   - name: image-tiler-dev
+#     activation:
+#       - command: dev
+#     build:
+#       tagPolicy:
+#         sha256: {}
+#       artifacts:
+#       - image: image-tiler-dev
+#         docker:
+#           buildArgs:
+#             NODE_ENV: development
+#             HOST: "0.0.0.0"
+#             PORT: "80" # keep in sync with values.yaml
+#             ROOTPATH: "/flights" # keep in sync with values.yaml
+#     deploy:
+#       helm:
+#         releases:
+#           - name: image-tiler-dev
+#             chartPath: image-tiler
+#             values:
+#               image: image-tiler-dev
+#             overrides:
+#               volume:
+#                 mountPath: "/flights"
+#                 name: flights-vol-dev
+#                 claim: flights-dir-claim-dev
+#                 storageClass: pv-dev
+#   - name: image-tiler-prod
+#     build:
+#       tagPolicy:
+#         sha256: {}
+#       artifacts:
+#       - image: image-tiler-prod
+#         docker:
+#           buildArgs:
+#             # TODO: change this default value to 'production' when ready
+#             NODE_ENV: "production"
+#             # TODO: change this default value to production HOST when ready
+#             HOST: "0.0.0.0"
+#             PORT: "80" # keep in sync with values.yaml
+#             ROOTPATH: "/flights" # keep in sync with values.yaml
+#     deploy:
+#       helm:
+#         releases:
+#           - name: image-tiler-prod
+#             chartPath: image-tiler
+#             values:
+#               image: image-tiler-prod
+#             overrides:
+#               replicaCount: 1 # TODO: make this a production appropriate number
+#               volume:
+#                 mountPath: "/flights"
+#                 name: flights-vol-prod
+#                 claim: flights-dir-claim-prod
+#                 storageClass: pv-prod
