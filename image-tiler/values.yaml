@@ -4,17 +4,11 @@ replicaCount: 1
 imageConfig:
   pullPolicy: IfNotPresent
 
-volume:
-  mountPath: "/flights"
-  name: flights-vol
-  claim: flights-dir-claim
-  hostPath: "/tmp/hostpath_pv"
-  storage: 1Gi
-  storageClass: pv
-  accessModes: ReadWriteOnce
+volumeClaim: ceres-flights
 
-service:
-  type: LoadBalancer
-  externalPort: 8888
-  internalPort: 80
+port: 8888
   
+nodeEnv: development
+host: "0.0.0.0"
+port: "80" # keep in sync with values.yaml
+rootPath: "/flights" # keep in sync with values.yaml

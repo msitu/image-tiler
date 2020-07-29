@@ -1,0 +1,4 @@
+# dependencies:
+# - name: smb-flexvol
+#   version: 0.2.0
+#   repository: "https://raw.githubusercontent.com/ceresimaging/kubernetes-volume-drivers/deploy/flexvolume/smb/helm/repo"
